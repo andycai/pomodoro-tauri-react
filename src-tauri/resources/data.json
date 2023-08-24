@@ -1,0 +1,16 @@
+{
+    "defaultWorkDuration": 1500,
+    "workDurationList": [
+        900,
+        1200,
+        1500,
+        1800,
+        2700,
+        3600
+    ],
+    "defaultBreakDuration": 300,
+    "breakDurationList": [
+        300,
+        600
+    ]
+}
