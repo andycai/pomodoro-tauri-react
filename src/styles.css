@@ -31,6 +31,18 @@
   cursor:default;
 }
 
+.start-op {
+  position: absolute;
+  top: 4em;
+  right: 0.4em;
+}
+
+.reset-op {
+  position: absolute;
+  top: 0;
+  right: 0.4em;
+}
+
 h1,
 h2 {
   text-align: center;
@@ -38,16 +50,16 @@ h2 {
 
 h1.time {
   margin: 0;
-  padding: 0;
-  line-height: 0.8;
-  font-size: 5rem;
+  padding: 0.2em 0 0 0;
+  line-height: 0.9;
+  font-size: 4rem;
 }
 
-h2.title {
+h4.title {
   margin: 0;
-  padding-bottom: 1em;
+  padding: 0;
   line-height: 0.4;
-  font-size: 1rem;
+  /* font-size: 1rem; */
 }
 
 button {
@@ -55,7 +67,7 @@ button {
   border: 1px solid transparent;
   padding: 0.1em 0.6em;
   margin: 0.3em 0.2em;
-  font-size: 0.8em;
+  font-size: 0.7em;
   font-weight: 500;
   font-family: inherit;
   color: #0f0f0f;
