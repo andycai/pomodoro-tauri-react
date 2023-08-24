@@ -123,11 +123,8 @@ function App() {
       clearInterval(ticker);
       ticker = setInterval(() => {
         globalCount -= 1;
-        console.info("work type 0: ", globalWorkType, globalWorkType === WorkType.Work);
         if (globalCount < 0) {
-          console.info("work type 1: ", globalWorkType, globalWorkType === WorkType.Work);
           globalWorkType = ((globalWorkType === WorkType.Work) ? WorkType.Break : WorkType.Work);
-          console.info("work type 2: ", globalWorkType, globalWorkType === WorkType.Work);
         }
         dispatch({type: Action.Tick, count: globalCount, workType: globalWorkType});
       }, INTERVAL);
@@ -146,14 +143,14 @@ function App() {
   return (
     <div className="container">
       <div className="content">
-      <h4 className="title">{title}</h4>
-      <h1 className="time">{showCount}</h1>
+        <h4 className="title">{title}</h4>
+        <h1 className="time">{showCount}</h1>
       </div>
       <div className="start-op">
-      <button type="button" onClick={clickStart}>{buttonName}</button>
+        <button type="button" onClick={clickStart}>{buttonName}</button>
       </div>
       <div style={{display:status !== Status.Idle?"block":"none"}} className="reset-op">
-      <button type="button" onClick={clickReset}>Reset</button>
+        <button type="button" onClick={clickReset}>Reset</button>
       {/* <button type="button" onClick={setDefault}>Default</button> */}
       </div>
     </div>

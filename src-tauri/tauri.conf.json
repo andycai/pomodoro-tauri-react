@@ -28,8 +28,7 @@
         "renameFile": true,
         "exists": true,
         "scope": [
-          "$RESOURCE/*/*",
-          "$PUBLIC"
+          "$RESOURCE/*/*"
         ]
       },
       "shell": {
