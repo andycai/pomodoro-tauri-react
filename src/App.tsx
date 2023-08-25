@@ -1,6 +1,9 @@
 import { useReducer } from "react";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
+import PlayCircleOutlineIcon from "mdi-react/PlayCircleOutlineIcon"
+import PauseCircleOutlineIcon from "mdi-react/PauseCircleOutlineIcon"
+import RefreshCircleIcon from "mdi-react/RefreshCircleIcon"
 import "./App.css";
 
 enum Status {
@@ -20,6 +23,9 @@ enum WorkType {
   Work = 1,
   Break,
 }
+
+let ICON_PLAY = "play-circle-outline";
+let ICON_PAUSE = "pause-circle-outline";
 
 const ONE_MINUTE = 60;
 const INTERVAL = 1000;
@@ -51,7 +57,7 @@ const initialState = {
   title: "Work",
   showCount: convertCount(defaultWorkDuration),
   status: Status.Idle,
-  buttonName: "Start",
+  icon: ICON_PLAY,
 }
 
 function workReducer(state: any, action: any) {
@@ -61,7 +67,7 @@ function workReducer(state: any, action: any) {
       return {
         ...state,
         status: Status.Pause,
-        buttonName: "Start",
+        icon: ICON_PLAY,
       };
     case Action.Reset:
       clearInterval(ticker);
@@ -72,13 +78,13 @@ function workReducer(state: any, action: any) {
         title: "Work",
         type: WorkType.Work,
         showCount: convertCount(defaultWorkDuration),
-        buttonName: "Start",
+        icon: ICON_PLAY,
       };
     case Action.Ready:
       return {
         ...state,
         status: Status.Tick,
-        buttonName: "Pause",
+        icon: ICON_PAUSE,
       }
     case Action.Tick:
       if (action.count < 0) {
@@ -95,7 +101,7 @@ function workReducer(state: any, action: any) {
         return {
           ...state,
           status: Status.Idle,
-          buttonName: "Start",
+          icon: ICON_PLAY,
         }
       } else {
         return {
@@ -103,7 +109,7 @@ function workReducer(state: any, action: any) {
           status: Status.Tick,
           count: action.count,
           showCount: convertCount(action.count),
-          buttonName: "Pause",
+          icon: ICON_PAUSE,
         }
       }
     default:
@@ -113,7 +119,7 @@ function workReducer(state: any, action: any) {
 
 function App() {
   const [state, dispatch] = useReducer(workReducer, initialState);
-  const {title, showCount, status, buttonName} = state;
+  const {title, showCount, status} = state;
 
   async function clickStart() {
     if (status === Status.Tick) {
@@ -135,6 +141,14 @@ function App() {
     dispatch({type: Action.Reset});
   }
 
+  function SubIcon() {
+    if (state.icon === ICON_PAUSE) {
+      return <PauseCircleOutlineIcon className="icon" size={26} onClick={clickStart} />;
+    } else {
+      return <PlayCircleOutlineIcon className="icon" size={26} onClick={clickStart} />;
+    }
+  }
+
   // async function setDefault() {
   //   localStorage.setItem("defaultWorkDuration", "10");
   //   localStorage.setItem("defaultBreakDuration", "5"); 
@@ -147,11 +161,10 @@ function App() {
         <h1 className="time">{showCount}</h1>
       </div>
       <div className="start-op">
-        <button type="button" onClick={clickStart}>{buttonName}</button>
+        <SubIcon /> 
       </div>
-      <div style={{display:status !== Status.Idle?"block":"none"}} className="reset-op">
-        <button type="button" onClick={clickReset}>Reset</button>
-      {/* <button type="button" onClick={setDefault}>Default</button> */}
+      <div className="reset-op">
+        <RefreshCircleIcon className="icon" size={26} onClick={clickReset} />
       </div>
     </div>
   );

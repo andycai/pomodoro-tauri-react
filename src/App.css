@@ -17,14 +17,14 @@
 
 .start-op {
   position: absolute;
-  top: 4em;
-  right: 0.4em;
+  top: 3.8em;
+  right: 0.5em;
 }
 
 .reset-op {
   position: absolute;
-  top: 0;
-  right: 0.4em;
+  top: 0.2em;
+  right: 0.5em;
 }
 
 h1.time {
@@ -39,4 +39,8 @@ h4.title {
   padding: 0;
   line-height: 0.4;
   /* font-size: 1rem; */
+}
+
+.icon {
+  cursor: pointer;
 }
