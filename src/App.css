@@ -17,14 +17,22 @@
 
 .start-op {
   position: absolute;
-  top: 3.8em;
-  right: 0.5em;
+  top: 3.8rem;
+  right: 0.5rem;
 }
 
 .reset-op {
   position: absolute;
-  top: 0.2em;
-  right: 0.5em;
+  top: 0.2rem;
+  right: 0.5rem;
+}
+
+.today-count {
+  position: absolute;
+  top: 3.8rem;
+  left: 0.5rem;
+  font-size: 0.8em;
+  font-weight: 500;
 }
 
 h1.time {

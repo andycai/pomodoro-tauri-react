@@ -1,171 +1,139 @@
-import { useReducer } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import "./App.css";
+import { LoadDataStatus, Status, WorkType } from "./enum"
+import TimeCounterCom from "./components/TimeCounterCom";
+import OperactionCom from "./components/OperationCom";
+import TodayCountCom from "./components/TodayCountCom";
+import RefreshCom from "./components/RefreshCom";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
-import PlayCircleOutlineIcon from "mdi-react/PlayCircleOutlineIcon"
-import PauseCircleOutlineIcon from "mdi-react/PauseCircleOutlineIcon"
-import RefreshCircleIcon from "mdi-react/RefreshCircleIcon"
-import "./App.css";
 
-enum Status {
-  Idle = 0,
-  Pause,
-  Tick,
+let ticker: any;
+let workType = WorkType.Work;
+
+function defaultWorkDuration() {
+  return localStorage.getItem("defaultWorkDuration()") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
+}
+function defaultBreakDuration() {
+  return localStorage.getItem("defaultBreakDuration") === null ? 300 : Number(localStorage.getItem("defaultBreakDuration"));
 }
 
-enum Action {
-  Pause = 1,
-  Reset,
-  Ready,
-  Tick,
+function getDateStr() {
+  const date = new Date();
+  const key = `todayCount-${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
+
+  return key;
 }
 
-enum WorkType {
-  Work = 1,
-  Break,
+function getLocalTodayCount() {
+  return localStorage.getItem(getDateStr()) === null ? 0 : Number(localStorage.getItem(getDateStr()));
 }
 
-let ICON_PLAY = "play-circle-outline";
-let ICON_PAUSE = "pause-circle-outline";
-
-const ONE_MINUTE = 60;
-const INTERVAL = 1000;
-const resourcePath = await resolveResource("resources/data.json");
-const data = JSON.parse(await readTextFile(resourcePath));
-
-if (localStorage.getItem("defaultWorkDuration") === null) {
-  localStorage.setItem("defaultWorkDuration", data.defaultWorkDuration.toString());
-}
-
-if (localStorage.getItem("defaultBreakDuration") === null) {
-  localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString());
-}
-
-const defaultWorkDuration = Number(localStorage.getItem("defaultWorkDuration"));
-const defaultBreakDuration = Number(localStorage.getItem("defaultBreakDuration"));
-let ticker : any;
-let globalCount = defaultWorkDuration;
-let globalWorkType = WorkType.Work;
-
-/**
- * 转换秒数为显示：分:秒
- */
-function convertCount(count: number) : string {
-  return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
-}
-
-const initialState = {
-  title: "Work",
-  showCount: convertCount(defaultWorkDuration),
-  status: Status.Idle,
-  icon: ICON_PLAY,
-}
-
-function workReducer(state: any, action: any) {
-  switch (action.type) {
-    case Action.Pause:
-      clearInterval(ticker);
-      return {
-        ...state,
-        status: Status.Pause,
-        icon: ICON_PLAY,
-      };
-    case Action.Reset:
-      clearInterval(ticker);
-      globalCount = defaultWorkDuration;
-      return {
-        ...state,
-        status: Status.Idle,
-        title: "Work",
-        type: WorkType.Work,
-        showCount: convertCount(defaultWorkDuration),
-        icon: ICON_PLAY,
-      };
-    case Action.Ready:
-      return {
-        ...state,
-        status: Status.Tick,
-        icon: ICON_PAUSE,
-      }
-    case Action.Tick:
-      if (action.count < 0) {
-        clearInterval(ticker);
-        if (action.workType === WorkType.Work) {
-          globalCount = defaultWorkDuration;
-          state.title = "Work";
-          state.showCount = convertCount(globalCount);
-        } else {
-          globalCount = defaultBreakDuration;
-          state.title = "Break";
-          state.showCount = convertCount(globalCount);
-        }
-        return {
-          ...state,
-          status: Status.Idle,
-          icon: ICON_PLAY,
-        }
-      } else {
-        return {
-          ...state,
-          status: Status.Tick,
-          count: action.count,
-          showCount: convertCount(action.count),
-          icon: ICON_PAUSE,
-        }
-      }
-    default:
-      return state;
-  }
+function updateLocalTodayCount(count: number) {
+  localStorage.setItem(getDateStr(), count.toString());
 }
 
 function App() {
-  const [state, dispatch] = useReducer(workReducer, initialState);
-  const {title, showCount, status} = state;
+  console.info("render App");
+  const [count, setCount] = useState(defaultWorkDuration());
+  const [status, setStatus] = useState(Status.Idle);
+  const [loaded, setLoaded] = useState(LoadDataStatus.Idle);
+  const refCount = useRef(defaultWorkDuration());
+  const [todayCount, setTodayCount] = useState(getLocalTodayCount());
 
-  async function clickStart() {
-    if (status === Status.Tick) {
-      dispatch({type: Action.Pause});
-    } else {
-      dispatch({type: Action.Ready});
+  function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
+    return useEffect(
+      () => {
+        const cleanupPromise = effect();
+        return () => { cleanupPromise.then(cleanup => cleanup && cleanup()) }
+      },
+      deps
+    );
+  }
+
+  useAsyncEffect(
+    async () => {
+      if (loaded !== LoadDataStatus.Idle) return;
+      setLoaded(LoadDataStatus.Loading);
+      const resourcePath = await resolveResource("resources/data.json");
+      const data = JSON.parse(await readTextFile(resourcePath));
+
+      if (localStorage.getItem("defaultWorkDuration") === null) {
+        localStorage.setItem("defaultWorkDuration", data.defaultWorkDuration().toString());
+      }
+
+      if (localStorage.getItem("defaultBreakDuration") === null) {
+        localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString());
+      }
+
+      setTodayCount(getLocalTodayCount());
+      setLoaded(LoadDataStatus.Loaded);
+      console.info("loadJsonData", data);
+    }, []
+  );
+
+  useEffect(
+    () => {
+      //
+    }, []
+  );
+
+  const counterData = useMemo(() => {
+    console.info("counter memo")
+    return count;
+  }, [count]);
+
+  function tick() {
+    setCount((count) => count - 1);
+    refCount.current--;
+    console.info("ref count", refCount.current);
+    if (refCount.current < 0) {
       clearInterval(ticker);
+      if (workType == WorkType.Work) {
+        setTodayCount((todayCount) => {
+          updateLocalTodayCount(todayCount + 1);
+          return todayCount + 1
+        });
+        setCount(defaultBreakDuration());
+        refCount.current = defaultBreakDuration();
+        workType = WorkType.Break;
+      } else {
+        setCount(defaultWorkDuration());
+        refCount.current = defaultWorkDuration();
+        workType = WorkType.Work;
+      }
+      setStatus(Status.Idle);
+    }
+  }
+
+  function onClickStart() {
+    clearInterval(ticker)
+    if (status !== Status.Tick) {
       ticker = setInterval(() => {
-        globalCount -= 1;
-        if (globalCount < 0) {
-          globalWorkType = ((globalWorkType === WorkType.Work) ? WorkType.Break : WorkType.Work);
-        }
-        dispatch({type: Action.Tick, count: globalCount, workType: globalWorkType});
-      }, INTERVAL);
-    }
-  }
-
-  async function clickReset() {
-    dispatch({type: Action.Reset});
-  }
-
-  function SubIcon() {
-    if (state.icon === ICON_PAUSE) {
-      return <PauseCircleOutlineIcon className="icon" size={26} onClick={clickStart} />;
+        tick();
+      }, 1000);
+      setStatus(Status.Tick);
     } else {
-      return <PlayCircleOutlineIcon className="icon" size={26} onClick={clickStart} />;
+      setStatus(Status.Idle);
     }
-  }
+  } 
 
-  // async function setDefault() {
-  //   localStorage.setItem("defaultWorkDuration", "10");
-  //   localStorage.setItem("defaultBreakDuration", "5"); 
-  // }
+  function onClickReset() {
+    localStorage.setItem("defaultWorkDuration", "5");
+    localStorage.setItem("defaultBreakDuration", "2");
+    clearInterval(ticker);
+    refCount.current = defaultWorkDuration();
+    setCount(defaultWorkDuration());
+    setStatus(Status.Idle);
+    workType = WorkType.Work;
+  }
 
   return (
     <div className="container">
-      <div className="content">
-        <h4 className="title">{title}</h4>
-        <h1 className="time">{showCount}</h1>
-      </div>
-      <div className="start-op">
-        <SubIcon /> 
-      </div>
-      <div className="reset-op">
-        <RefreshCircleIcon className="icon" size={26} onClick={clickReset} />
-      </div>
+      <TimeCounterCom data={counterData} title={workType === WorkType.Work ? "Work" : "Break"} />
+      <TodayCountCom data={todayCount} />
+      <OperactionCom data={status} onClick={onClickStart} />
+      <RefreshCom onClick={onClickReset} />
     </div>
   );
 }
