@@ -31,4 +31,4 @@ npm run tauri dev
 
 ```bash
 npm run tauri build
-`````:w
+`````
