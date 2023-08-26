@@ -7,7 +7,7 @@ function OperationButtonCom(props: any) {
 }
 
 function OperactionCom(props: any) {
-  console.info("render OperactionCom");
+  console.info("render Operaction");
   return (
     <div className="start-op">
       <OperationButtonCom data={props.data} onClick={props.onClick} />

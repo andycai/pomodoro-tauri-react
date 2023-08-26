@@ -1,12 +1,3 @@
-const ONE_MINUTE = 60;
-
-/**
- * 转换秒数为显示：分:秒
- */
-function convertCount(count: number) : string {
-  return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
-}
-
 // function defaultWorkDuration() {
 //   return localStorage.getItem("defaultWorkDuration()") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
 // }
@@ -83,12 +74,10 @@ function TimeCounterCom(props: any) {
 
   console.info("render TimeCounter");
 
-  let counterShow = convertCount(props.data);
-
   return (
       <div className="content">
         <h4 className="title">{props.title}</h4>
-        <h1 className="time">{counterShow}</h1>
+        <h1 className="time">{props.data}</h1>
       </div>
   );
 }

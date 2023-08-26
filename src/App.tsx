@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
@@ -8,8 +8,21 @@ import RefreshCom from "./components/RefreshCom";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
 
+const ONE_MINUTE = 60;
 let ticker: any;
-let workType = WorkType.Work;
+
+function convertCount(count: number) : string {
+  return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
+}
+
+function showTitle(type: WorkType) {
+  switch (type) {
+    case WorkType.Work:
+      return "Work";
+    case WorkType.Break:
+      return "Break";
+  }
+}
 
 function defaultWorkDuration() {
   return localStorage.getItem("defaultWorkDuration()") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
@@ -38,8 +51,8 @@ function App() {
   const [count, setCount] = useState(defaultWorkDuration());
   const [status, setStatus] = useState(Status.Idle);
   const [loaded, setLoaded] = useState(LoadDataStatus.Idle);
-  const refCount = useRef(defaultWorkDuration());
   const [todayCount, setTodayCount] = useState(getLocalTodayCount());
+  const [workType, setWorkType] = useState(WorkType.Work);
 
   function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
     return useEffect(
@@ -72,41 +85,34 @@ function App() {
     }, []
   );
 
-  useEffect(
-    () => {
-      //
-    }, []
-  );
-
-  const counterData = useMemo(() => {
-    console.info("counter memo")
-    return count;
-  }, [count]);
+  // const counterData = useMemo(() => {
+  //   // console.info("counter memo")
+  //   return convertCount(count);
+  // }, [count]);
 
   function tick() {
-    setCount((count) => count - 1);
-    refCount.current--;
-    console.info("ref count", refCount.current);
-    if (refCount.current < 0) {
-      clearInterval(ticker);
-      if (workType == WorkType.Work) {
-        setTodayCount((todayCount) => {
-          updateLocalTodayCount(todayCount + 1);
-          return todayCount + 1
-        });
-        setCount(defaultBreakDuration());
-        refCount.current = defaultBreakDuration();
-        workType = WorkType.Break;
+    setCount((count) => {
+      if (count === 0) {
+        clearInterval(ticker);
+        setStatus(Status.Idle);
+        if (workType == WorkType.Work) {
+          setTodayCount((todayCount) => {
+            updateLocalTodayCount(todayCount + 1);
+            return todayCount + 1
+          });
+          setWorkType(WorkType.Break)
+          return defaultBreakDuration();
+        } else {
+          setWorkType(WorkType.Work)
+          return defaultWorkDuration();
+        }
       } else {
-        setCount(defaultWorkDuration());
-        refCount.current = defaultWorkDuration();
-        workType = WorkType.Work;
+        return count - 1;
       }
-      setStatus(Status.Idle);
-    }
+    });
   }
 
-  function onClickStart() {
+  const onClickStart = useCallback(() => {
     clearInterval(ticker)
     if (status !== Status.Tick) {
       ticker = setInterval(() => {
@@ -116,26 +122,29 @@ function App() {
     } else {
       setStatus(Status.Idle);
     }
-  } 
+  }, []);
 
-  function onClickReset() {
-    localStorage.setItem("defaultWorkDuration", "5");
-    localStorage.setItem("defaultBreakDuration", "2");
+  const onClickReset = useCallback(() => {
+    // localStorage.setItem("defaultWorkDuration", "5");
+    // localStorage.setItem("defaultBreakDuration", "2");
     clearInterval(ticker);
-    refCount.current = defaultWorkDuration();
     setCount(defaultWorkDuration());
     setStatus(Status.Idle);
-    workType = WorkType.Work;
-  }
+    setWorkType(WorkType.Work);
+  }, []);
 
   return (
     <div className="container">
-      <TimeCounterCom data={counterData} title={workType === WorkType.Work ? "Work" : "Break"} />
-      <TodayCountCom data={todayCount} />
-      <OperactionCom data={status} onClick={onClickStart} />
-      <RefreshCom onClick={onClickReset} />
+      <TimeCounterCom data={convertCount(count)} title={showTitle(workType)} />
+      <TodayCountCom2 data={todayCount} />
+      <OperactionCom2 data={status} onClick={onClickStart} />
+      <RefreshCom2 onClick={onClickReset} />
     </div>
   );
 }
+
+const TodayCountCom2 = React.memo(TodayCountCom);
+const OperactionCom2 = React.memo(OperactionCom);
+const RefreshCom2 = React.memo(RefreshCom);
 
 export default App;
