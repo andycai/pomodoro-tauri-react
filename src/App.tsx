@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import "./App.css";
 import { LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
@@ -15,7 +15,7 @@ function convertCount(count: number) : string {
   return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
 }
 
-function showTitle(type: WorkType) {
+function convertTitle(type: WorkType) {
   switch (type) {
     case WorkType.Work:
       return "Work";
@@ -31,7 +31,7 @@ function defaultBreakDuration() {
   return localStorage.getItem("defaultBreakDuration") === null ? 300 : Number(localStorage.getItem("defaultBreakDuration"));
 }
 
-function getDateStr() {
+function convertDate() {
   const date = new Date();
   const key = `todayCount-${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
 
@@ -39,11 +39,11 @@ function getDateStr() {
 }
 
 function getLocalTodayCount() {
-  return localStorage.getItem(getDateStr()) === null ? 0 : Number(localStorage.getItem(getDateStr()));
+  return localStorage.getItem(convertDate()) === null ? 0 : Number(localStorage.getItem(convertDate()));
 }
 
 function updateLocalTodayCount(count: number) {
-  localStorage.setItem(getDateStr(), count.toString());
+  localStorage.setItem(convertDate(), count.toString());
 }
 
 function App() {
@@ -135,7 +135,7 @@ function App() {
 
   return (
     <div className="container">
-      <TimeCounterCom data={convertCount(count)} title={showTitle(workType)} />
+      <TimeCounterCom data={convertCount(count)} title={convertTitle(workType)} />
       <TodayCountCom2 data={todayCount} />
       <OperactionCom2 data={status} onClick={onClickStart} />
       <RefreshCom2 onClick={onClickReset} />
