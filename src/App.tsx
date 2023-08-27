@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useRef } from "react";
 import "./App.css";
-import { LoadDataStatus, Status, WorkType } from "./enum"
+import { Action, LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
 import OperactionCom from "./components/OperationCom";
 import TodayCountCom from "./components/TodayCountCom";
@@ -25,7 +25,7 @@ function convertTitle(type: WorkType) {
 }
 
 function defaultWorkDuration() {
-  return localStorage.getItem("defaultWorkDuration()") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
+  return localStorage.getItem("defaultWorkDuration") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
 }
 function defaultBreakDuration() {
   return localStorage.getItem("defaultBreakDuration") === null ? 300 : Number(localStorage.getItem("defaultBreakDuration"));
@@ -46,13 +46,91 @@ function updateLocalTodayCount(count: number) {
   localStorage.setItem(convertDate(), count.toString());
 }
 
+const initialState = {
+  count: defaultWorkDuration(),
+  status: Status.Idle,
+  loaded: LoadDataStatus.Idle,
+  todayCount: getLocalTodayCount(),
+  workType: WorkType.Work,
+}
+
+function workReducer(state: any, action: any) {
+  switch (action.type) {
+    case Action.Pause:
+      return {
+        ...state,
+        status: Status.Pause,
+      };
+    case Action.Reset:
+      // localStorage.setItem("defaultWorkDuration", "5");
+      // localStorage.setItem("defaultBreakDuration", "2");
+      return {
+        ...state,
+        count: defaultWorkDuration(),
+        status: Status.Idle,
+        workType: WorkType.Work,
+      };
+    case Action.Ready:
+      return {
+        ...state,
+        status: Status.Tick,
+      };
+    case Action.Tick:
+      console.info("count: ", action.count)
+      if (action.count < 0) {
+        clearInterval(ticker);
+        if (action.workType === WorkType.Work) {
+          updateLocalTodayCount(action.todayCount + 1);
+          return {
+            ...state,
+            count: defaultBreakDuration(),
+            status: Status.Idle,
+            todayCount: action.todayCount + 1,
+            workType: WorkType.Break,
+          }
+        } else {
+          return {
+            ...state,
+            count: defaultWorkDuration(),
+            status: Status.Idle,
+            workType: WorkType.Work,
+          }
+        }
+      }
+      return {
+        ...state,
+        count: action.count,
+      }
+    default:
+      return state;
+  }
+}
+
+function useInterval(callback: any, delay: number, status: Status) {
+  const savedCallback = useRef(callback);
+  let id: any;
+
+  useEffect(() => {
+    savedCallback.current = callback;
+  })
+
+  useEffect(() => {
+    console.info("useInterval", status);
+    clearInterval(id);
+    function tick() {
+      savedCallback.current();
+    }
+    if (status === Status.Tick) {
+      id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [status]);
+}
+
 function App() {
   console.info("render App");
-  const [count, setCount] = useState(defaultWorkDuration());
-  const [status, setStatus] = useState(Status.Idle);
-  const [loaded, setLoaded] = useState(LoadDataStatus.Idle);
-  const [todayCount, setTodayCount] = useState(getLocalTodayCount());
-  const [workType, setWorkType] = useState(WorkType.Work);
+  const [state, dispatch] = useReducer(workReducer, initialState);
+  const { count, status, loaded, todayCount, workType } = state;
 
   function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
     return useEffect(
@@ -67,7 +145,7 @@ function App() {
   useAsyncEffect(
     async () => {
       if (loaded !== LoadDataStatus.Idle) return;
-      setLoaded(LoadDataStatus.Loading);
+      state.loaded = LoadDataStatus.Loading;
       const resourcePath = await resolveResource("resources/data.json");
       const data = JSON.parse(await readTextFile(resourcePath));
 
@@ -79,65 +157,35 @@ function App() {
         localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString());
       }
 
-      setTodayCount(getLocalTodayCount());
-      setLoaded(LoadDataStatus.Loaded);
+      state.todayCount = getLocalTodayCount();
+      state.loaded = LoadDataStatus.Loaded;
       console.info("loadJsonData", data);
     }, []
   );
 
-  // const counterData = useMemo(() => {
-  //   // console.info("counter memo")
-  //   return convertCount(count);
-  // }, [count]);
+  useInterval(() => {
+   dispatch({ type: Action.Tick, count: count - 1, workType: workType, todayCount: todayCount });
+  }, 1000, status);
 
-  function tick() {
-    setCount((count) => {
-      if (count === 0) {
-        clearInterval(ticker);
-        setStatus(Status.Idle);
-        if (workType == WorkType.Work) {
-          setTodayCount((todayCount) => {
-            updateLocalTodayCount(todayCount + 1);
-            return todayCount + 1
-          });
-          setWorkType(WorkType.Break)
-          return defaultBreakDuration();
-        } else {
-          setWorkType(WorkType.Work)
-          return defaultWorkDuration();
-        }
-      } else {
-        return count - 1;
-      }
-    });
-  }
-
-  const onClickStart = useCallback(() => {
-    clearInterval(ticker)
+  const onClickStart = useCallback((status: Status) => {
     if (status !== Status.Tick) {
-      ticker = setInterval(() => {
-        tick();
-      }, 1000);
-      setStatus(Status.Tick);
+      dispatch({ type: Action.Ready });
+      console.info("after-1 click", status)
     } else {
-      setStatus(Status.Idle);
+      dispatch({ type: Action.Pause });
+      console.info("after-2 click", status)
     }
   }, []);
 
   const onClickReset = useCallback(() => {
-    // localStorage.setItem("defaultWorkDuration", "5");
-    // localStorage.setItem("defaultBreakDuration", "2");
-    clearInterval(ticker);
-    setCount(defaultWorkDuration());
-    setStatus(Status.Idle);
-    setWorkType(WorkType.Work);
+    dispatch({ type: Action.Reset });
   }, []);
 
   return (
     <div className="container">
       <TimeCounterCom data={convertCount(count)} title={convertTitle(workType)} />
       <TodayCountCom2 data={todayCount} />
-      <OperactionCom2 data={status} onClick={onClickStart} />
+      <OperactionCom2 data={status} onClick={() => onClickStart(status) } />
       <RefreshCom2 onClick={onClickReset} />
     </div>
   );
