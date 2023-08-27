@@ -9,7 +9,6 @@ import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
 
 const ONE_MINUTE = 60;
-let ticker: any;
 
 function convertCount(count: number) : string {
   return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
@@ -76,9 +75,7 @@ function workReducer(state: any, action: any) {
         status: Status.Tick,
       };
     case Action.Tick:
-      console.info("count: ", action.count)
       if (action.count < 0) {
-        clearInterval(ticker);
         if (action.workType === WorkType.Work) {
           updateLocalTodayCount(action.todayCount + 1);
           return {
@@ -115,7 +112,6 @@ function useInterval(callback: any, delay: number, status: Status) {
   })
 
   useEffect(() => {
-    console.info("useInterval", status);
     clearInterval(id);
     function tick() {
       savedCallback.current();
@@ -159,7 +155,6 @@ function App() {
 
       state.todayCount = getLocalTodayCount();
       state.loaded = LoadDataStatus.Loaded;
-      console.info("loadJsonData", data);
     }, []
   );
 
@@ -170,10 +165,8 @@ function App() {
   const onClickStart = useCallback((status: Status) => {
     if (status !== Status.Tick) {
       dispatch({ type: Action.Ready });
-      console.info("after-1 click", status)
     } else {
       dispatch({ type: Action.Pause });
-      console.info("after-2 click", status)
     }
   }, []);
 

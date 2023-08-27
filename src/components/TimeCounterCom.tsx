@@ -1,6 +1,5 @@
 function TimeCounterCom(props: any) {
   console.info("render TimeCounter");
-
   return (
       <div className="content">
         <h4 className="title">{props.title}</h4>
