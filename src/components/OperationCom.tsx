@@ -2,19 +2,20 @@ import PauseCircleOutlineIcon from "mdi-react/PauseCircleOutlineIcon";
 import PlayCircleOutlineIcon from "mdi-react/PlayCircleOutlineIcon";
 import { Status } from "../enum";
 import { memo, useContext } from "react";
-import { StatusContext } from "../utils";
+import { StatusCbContext, StatusContext } from "../utils";
 
-function OperactionCom(props: any) {
-  const onClickStart = useContext(StatusContext);
+function OperactionCom() {
+  const status = useContext(StatusContext);
+  const onClickStart = useContext(StatusCbContext);
   console.info("render Operaction");
 
   return (
     <div className="start-op">
       {
-        (props.status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(props.status)} />)
+        (status === Status.Tick)  ?
+          (<PauseCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(status)} />)
         :
-          (<PlayCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(props.status)} />)
+          (<PlayCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(status)} />)
       }
     </div>
   );

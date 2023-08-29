@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef, useState } from "react";
 import "./App.css";
 import { Action, LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
@@ -7,7 +7,8 @@ import TodayCountCom from "./components/TodayCountCom";
 import RefreshCom from "./components/RefreshCom";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
-import { CountContext, ResetContext, StatusContext, TodayCountContext } from "./utils";
+import { CountContext, ResetContext, StatusCbContext, StatusContext, TodayCountContext, WorkTypeContext } from "./utils";
+import WorkTypeCom from "./components/WorkTypeCom";
 
 function defaultWorkDuration() {
   return localStorage.getItem("defaultWorkDuration") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
@@ -34,7 +35,6 @@ function updateLocalTodayCount(count: number) {
 const initialState = {
   count: defaultWorkDuration(),
   status: Status.Idle,
-  loaded: LoadDataStatus.Idle,
   todayCount: getLocalTodayCount(),
   workType: WorkType.Work,
 }
@@ -111,8 +111,23 @@ function useInterval(callback: any, delay: number, status: Status) {
 
 function App() {
   console.info("render App");
+  return (
+    <div className="container">
+      <ContextContainer>
+        <WorkTypeCom />
+        <TimeCounterCom />
+        <TodayCountCom />
+        <OperactionCom />
+        <RefreshCom />
+      </ContextContainer>
+    </div>
+  );
+}
+
+const ContextContainer = (props: any) => {
   const [state, dispatch] = useReducer(workReducer, initialState);
-  const { count, status, loaded, todayCount, workType } = state;
+  const {count, status, todayCount, workType} = state;
+  const [loaded, setLoaded] = useState<LoadDataStatus>(LoadDataStatus.Idle);
 
   function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
     return useEffect(
@@ -127,7 +142,7 @@ function App() {
   useAsyncEffect(
     async () => {
       if (loaded !== LoadDataStatus.Idle) return;
-      state.loaded = LoadDataStatus.Loading;
+      setLoaded(LoadDataStatus.Loading);
       const resourcePath = await resolveResource("resources/data.json");
       const data = JSON.parse(await readTextFile(resourcePath));
 
@@ -140,7 +155,7 @@ function App() {
       }
 
       state.todayCount = getLocalTodayCount();
-      state.loaded = LoadDataStatus.Loaded;
+      setLoaded(LoadDataStatus.Loaded);
     }, []
   );
 
@@ -161,21 +176,20 @@ function App() {
   }, []);
 
   return (
-    <div className="container">
-      <CountContext.Provider value={{count, workType}}>
-        <TimeCounterCom />
-      </CountContext.Provider>
+    <ResetContext.Provider value={onClickReset}>
       <TodayCountContext.Provider value={todayCount}>
-        <TodayCountCom />
+        <StatusCbContext.Provider value= {onClickStart}>
+          <StatusContext.Provider value= {status}>
+            <WorkTypeContext.Provider value={workType}>
+              <CountContext.Provider value={count}>
+                {props.children}
+              </CountContext.Provider>
+            </WorkTypeContext.Provider>
+          </StatusContext.Provider>
+        </StatusCbContext.Provider>
       </TodayCountContext.Provider>
-      <StatusContext.Provider value={onClickStart}>
-        <OperactionCom status={status} />
-      </StatusContext.Provider>
-      <ResetContext.Provider value={onClickReset}>
-        <RefreshCom />
-      </ResetContext.Provider>
-    </div>
-  );
+    </ResetContext.Provider>
+  )
 }
 
 export default App;
