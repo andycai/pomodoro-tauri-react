@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useReducer, useRef } from "react";
+import { useCallback, useEffect, useReducer, useRef } from "react";
 import "./App.css";
 import { Action, LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
@@ -7,21 +7,7 @@ import TodayCountCom from "./components/TodayCountCom";
 import RefreshCom from "./components/RefreshCom";
 import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
-
-const ONE_MINUTE = 60;
-
-function convertCount(count: number) : string {
-  return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`);
-}
-
-function convertTitle(type: WorkType) {
-  switch (type) {
-    case WorkType.Work:
-      return "Work";
-    case WorkType.Break:
-      return "Break";
-  }
-}
+import { CountContext, ResetContext, StatusContext, TodayCountContext } from "./utils";
 
 function defaultWorkDuration() {
   return localStorage.getItem("defaultWorkDuration") === null ? 1500 : Number(localStorage.getItem("defaultWorkDuration"));
@@ -176,16 +162,20 @@ function App() {
 
   return (
     <div className="container">
-      <TimeCounterCom data={convertCount(count)} title={convertTitle(workType)} />
-      <TodayCountCom2 data={todayCount} />
-      <OperactionCom2 data={status} onClick={() => onClickStart(status) } />
-      <RefreshCom2 onClick={onClickReset} />
+      <CountContext.Provider value={{count, workType}}>
+        <TimeCounterCom />
+      </CountContext.Provider>
+      <TodayCountContext.Provider value={todayCount}>
+        <TodayCountCom />
+      </TodayCountContext.Provider>
+      <StatusContext.Provider value={onClickStart}>
+        <OperactionCom status={status} />
+      </StatusContext.Provider>
+      <ResetContext.Provider value={onClickReset}>
+        <RefreshCom />
+      </ResetContext.Provider>
     </div>
   );
 }
-
-const TodayCountCom2 = React.memo(TodayCountCom);
-const OperactionCom2 = React.memo(OperactionCom);
-const RefreshCom2 = React.memo(RefreshCom);
 
 export default App;

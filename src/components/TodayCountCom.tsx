@@ -1,9 +1,12 @@
-// import "../enum/enum";
 import ClockOutlineIcon from "mdi-react/ClockOutlineIcon";
+import { TodayCountContext } from "../utils";
+import { memo, useContext } from "react";
 
-function TodayCountCom(props: any) {
+function TodayCountCom() {
+    const todayCount = useContext(TodayCountContext);
+
     console.info("render today count");
-    return <div className="today-count"><ClockOutlineIcon className="icon" size={26} />x{props.data}</div>
+    return <div className="today-count"><ClockOutlineIcon className="icon" size={26} />x{todayCount}</div>
 }
 
-export default TodayCountCom;
+export default memo(TodayCountCom);

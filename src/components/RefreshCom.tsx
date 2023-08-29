@@ -1,12 +1,16 @@
 import RefreshCircleIcon from "mdi-react/RefreshCircleIcon";
+import { memo, useContext } from "react";
+import { ResetContext } from "../utils";
 
-function RefreshCom(props: any) {
+function RefreshCom() {
+    const onClickReset = useContext(ResetContext);
+
     console.info("render refresh");
     return (
       <div className="reset-op">
-        <RefreshCircleIcon className="icon" size={26} onClick={props.onClick} />
+        <RefreshCircleIcon className="icon" size={26} onClick={onClickReset} />
       </div>
     );
 }
 
-export default RefreshCom;
+export default memo(RefreshCom);
