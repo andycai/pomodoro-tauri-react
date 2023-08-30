@@ -28,7 +28,7 @@ function getLocalTodayCount() {
   return localStorage.getItem(convertDate()) === null ? 0 : Number(localStorage.getItem(convertDate()));
 }
 
-function updateLocalTodayCount(count: number) {
+function saveLocalTodayCount(count: number) {
   localStorage.setItem(convertDate(), count.toString());
 }
 
@@ -61,17 +61,18 @@ function workReducer(state: any, action: any) {
         status: Status.Tick,
       };
     case Action.Tick:
-      if (action.count < 0) {
-        if (action.workType === WorkType.Work) {
-          updateLocalTodayCount(action.todayCount + 1);
+      const {count, workType, todayCount} = action.payload;
+      if (count < 0) {
+        if (workType === WorkType.Work) { // 完成工作
+          saveLocalTodayCount(todayCount + 1);
           return {
             ...state,
             count: defaultBreakDuration(),
             status: Status.Idle,
-            todayCount: action.todayCount + 1,
+            todayCount: todayCount + 1, // 今天番茄钟数+1
             workType: WorkType.Break,
           }
-        } else {
+        } else { // 完成休息
           return {
             ...state,
             count: defaultWorkDuration(),
@@ -82,7 +83,7 @@ function workReducer(state: any, action: any) {
       }
       return {
         ...state,
-        count: action.count,
+        count: count,
       }
     default:
       return state;
@@ -160,7 +161,14 @@ const ContextContainer = (props: any) => {
   );
 
   useInterval(() => {
-   dispatch({ type: Action.Tick, count: count - 1, workType: workType, todayCount: todayCount });
+    dispatch({
+      type: Action.Tick, 
+      payload: {
+        count: count - 1, 
+        workType: workType, 
+        todayCount: todayCount
+      }
+    });
   }, 1000, status);
 
   const onClickStart = useCallback((status: Status) => {

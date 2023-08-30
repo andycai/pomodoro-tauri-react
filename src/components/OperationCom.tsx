@@ -13,9 +13,9 @@ function OperactionCom() {
     <div className="start-op">
       {
         (status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(status)} />)
+          (<PauseCircleOutlineIcon className="icon" size={22} onClick={() => onClickStart(status)} />)
         :
-          (<PlayCircleOutlineIcon className="icon" size={26} onClick={() => onClickStart(status)} />)
+          (<PlayCircleOutlineIcon className="icon" size={22} onClick={() => onClickStart(status)} />)
       }
     </div>
   );
