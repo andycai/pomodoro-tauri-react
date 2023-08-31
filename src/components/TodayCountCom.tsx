@@ -6,7 +6,12 @@ function TodayCountCom() {
     const todayCount = useContext(TodayCountContext);
 
     console.info("render today count");
-    return <div className="today-count"><ClockOutlineIcon className="icon" size={22} />x{todayCount}</div>
+    return (
+      <div className="absolute top-1 left-1 flex align-bottom">
+        <ClockOutlineIcon className="" size={22} />
+        <span className="text-xs">x{todayCount}</span>
+      </div>
+    );
 }
 
 export default memo(TodayCountCom);

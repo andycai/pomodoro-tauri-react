@@ -7,9 +7,7 @@ function RefreshCom() {
 
     console.info("render refresh");
     return (
-      <div className="reset-op">
-        <RefreshCircleIcon className="icon" size={22} onClick={onClickReset} />
-      </div>
+      <RefreshCircleIcon className="cursor-pointer absolute top-1 right-1" size={22} onClick={onClickReset} />
     );
 }
 

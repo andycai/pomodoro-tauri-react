@@ -8,16 +8,17 @@ function OperactionCom() {
   const status = useContext(StatusContext);
   const onClickStart = useContext(StatusCbContext);
   console.info("render Operaction");
+  const className = "cursor-pointer absolute bottom-1 right-1";
 
   return (
-    <div className="start-op">
+    <>
       {
         (status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className="icon" size={22} onClick={() => onClickStart(status)} />)
+          (<PauseCircleOutlineIcon className={className} size={22} onClick={() => onClickStart(status)} />)
         :
-          (<PlayCircleOutlineIcon className="icon" size={22} onClick={() => onClickStart(status)} />)
+          (<PlayCircleOutlineIcon className={className} size={22} onClick={() => onClickStart(status)} />)
       }
-    </div>
+    </>
   );
 }
 

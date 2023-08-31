@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from "react";
-import "./App.css";
 import { Action, LoadDataStatus, Status, WorkType } from "./enum"
 import TimeCounterCom from "./components/TimeCounterCom";
 import OperactionCom from "./components/OperationCom";
@@ -113,7 +112,7 @@ function useInterval(callback: any, delay: number, status: Status) {
 function App() {
   console.info("render App");
   return (
-    <div className="container">
+    <div className="h-screen w-screen font-sans flow-root select-none cursor-default text-white bg-neutral-800">
       <ContextContainer>
         <WorkTypeCom />
         <TimeCounterCom />

@@ -10,12 +10,12 @@ function convertCount(count: number) : string {
 
 function TimeCounterCom() {
   const count = useContext(CountContext);
-  const [className, setClassName] = useState("time work-color");
+  const [className, setClassName] = useState("");
   const workType = useContext(WorkTypeContext);
   console.info("render TimeCounter");
 
   useMemo(() => {
-    setClassName(workType === WorkType.Work ? "time work-color" : "time break-color");
+    setClassName(workType === WorkType.Work ? "antialiased text-red-600 text-7xl font-black text-center" : "antialiased text-green-600 text-7xl font-black text-center");
   }, [workType]);
 
   return (
