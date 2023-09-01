@@ -1,6 +1,6 @@
-import { memo, useContext, useMemo, useState } from "react";
-import { WorkType } from "../enum";
-import { WorkTypeContext } from "../utils";
+import { memo } from "react";
+import { useCountStore } from "../store/store";
+import { WorkType } from "../config";
 
 function convertTitle(type: WorkType) {
   switch (type) {
@@ -12,14 +12,11 @@ function convertTitle(type: WorkType) {
 }
 
 function WorkTypeCom() {
-  const workType = useContext(WorkTypeContext)
-  console.info("render Work Type");
-  const [className, setClassName] = useState("");
-  useMemo(() => {
-    setClassName(workType === WorkType.Work ? "mt-2 text-red-600 text-sm font-bold text-center" : "mt-1 text-green-600 text-sm font-bold text-center");
-  }, [workType])
+  const workType = useCountStore((state) => state.workType);
+  console.info("render Work Type", workType);
+
   return (
-    <h4 className={className}>- {convertTitle(workType)} -</h4>
+    <h4 className={`${workType === WorkType.Work ? "mt-2 text-red-600 text-sm font-bold text-center" : "mt-2 text-green-600 text-sm font-bold text-center"}`}>- {convertTitle(workType)} -</h4>
   );
 }
 

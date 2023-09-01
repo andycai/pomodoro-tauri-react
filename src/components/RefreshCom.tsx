@@ -1,13 +1,13 @@
 import RefreshCircleIcon from "mdi-react/RefreshCircleIcon";
-import { memo, useContext } from "react";
-import { ResetContext } from "../utils";
+import { memo } from "react";
+import { useCountStore } from "../store/store";
 
 function RefreshCom() {
-    const onClickReset = useContext(ResetContext);
-
     console.info("render refresh");
+    const reset = useCountStore((state) => state.reset);
+
     return (
-      <RefreshCircleIcon className="cursor-pointer absolute top-1 right-1" size={22} onClick={onClickReset} />
+      <RefreshCircleIcon className="cursor-pointer absolute top-1 right-1" size={22} onClick={reset} />
     );
 }
 

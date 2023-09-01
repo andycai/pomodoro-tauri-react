@@ -1,22 +1,22 @@
 import PauseCircleOutlineIcon from "mdi-react/PauseCircleOutlineIcon";
 import PlayCircleOutlineIcon from "mdi-react/PlayCircleOutlineIcon";
-import { Status } from "../enum";
-import { memo, useContext } from "react";
-import { StatusCbContext, StatusContext } from "../utils";
+import { memo } from "react";
+import { useCountStore } from "../store/store";
+import { Status } from "../config";
 
 function OperactionCom() {
-  const status = useContext(StatusContext);
-  const onClickStart = useContext(StatusCbContext);
   console.info("render Operaction");
+  const status = useCountStore((state) => state.status);
+  const tick = useCountStore((state) => state.tick);
   const className = "cursor-pointer absolute bottom-1 right-1";
 
   return (
     <>
       {
         (status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className={className} size={22} onClick={() => onClickStart(status)} />)
+          (<PauseCircleOutlineIcon className={className} size={22} onClick={tick} />)
         :
-          (<PlayCircleOutlineIcon className={className} size={22} onClick={() => onClickStart(status)} />)
+          (<PlayCircleOutlineIcon className={className} size={22} onClick={tick} />)
       }
     </>
   );
