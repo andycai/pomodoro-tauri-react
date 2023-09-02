@@ -3,11 +3,11 @@ import { memo } from "react";
 import { useCountStore } from "../store/store";
 
 function RefreshCom() {
-    console.info("render refresh");
+    console.log("render refresh");
     const reset = useCountStore((state) => state.reset);
 
     return (
-      <RefreshCircleIcon className="cursor-pointer absolute top-1 right-1" size={22} onClick={reset} />
+      <RefreshCircleIcon className="cursor-pointer" size={24} onClick={reset} />
     );
 }
 

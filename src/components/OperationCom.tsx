@@ -5,18 +5,18 @@ import { useCountStore } from "../store/store";
 import { Status } from "../config";
 
 function OperactionCom() {
-  console.info("render Operaction");
+  console.log("render Operaction");
   const status = useCountStore((state) => state.status);
   const tick = useCountStore((state) => state.tick);
-  const className = "cursor-pointer absolute bottom-1 right-1";
+  const className = "cursor-pointer";
 
   return (
     <>
       {
         (status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className={className} size={22} onClick={tick} />)
+          (<PauseCircleOutlineIcon className={className} size={24} onClick={tick} />)
         :
-          (<PlayCircleOutlineIcon className={className} size={22} onClick={tick} />)
+          (<PlayCircleOutlineIcon className={className} size={24} onClick={tick} />)
       }
     </>
   );

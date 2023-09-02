@@ -7,10 +7,11 @@ function convertCount(count: number) : string {
 
 function TimeCounterCom() {
   const [count, workType] = useCountStore((state) => [state.count, state.workType]);
-  console.info("render TimeCounter", workType);
+  console.log("render TimeCounter", workType);
+  const s = "antialiased pt-1 text-7xl font-black text-center ";
 
   return (
-    <h1 className={`${workType === WorkType.Work ? "antialiased text-red-600 text-7xl font-black text-center" : "antialiased text-green-600 text-7xl font-black text-center"}`}>{convertCount(count)}</h1>
+    <h1 className={`${workType === WorkType.Work ? s+"text-red-600" : s+"text-green-600"}`}>{convertCount(count)}</h1>
   );
 }
 

@@ -18,7 +18,8 @@ This template should help get you started developing with Tauri, React and Types
 
 ```bash
 npm create tauri-app@latest
-npm install @tauri-apps/cli@latest @tauri-apps/api@latest
+npm install --save-dev @tauri-apps/cli@latest
+npm install
 ```
 
 ## run project

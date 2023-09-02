@@ -7,7 +7,7 @@ import { resolveResource } from "@tauri-apps/api/path";
 import { readTextFile } from "@tauri-apps/api/fs";
 import WorkTypeCom from "./components/WorkTypeCom";
 import { useCountStore } from "./store/store";
-import { LoadDataStatus, Status } from "./config";
+import { LoadDataStatus, Status, WorkType } from "./config";
 
 function convertDate() {
   const date = new Date();
@@ -49,8 +49,8 @@ function useInterval(callback: any, delay: number, status: Status) {
 }
 
 function App() {
-  console.info("render App");
-  const [status, today] = useCountStore((state) => [state.status, state.today]);
+  console.log("render App");
+  const [status, today, workType] = useCountStore((state) => [state.status, state.today, state.workType]);
   const updateToday = useCountStore((state) => state.updateToday);
   const updateCount = useCountStore((state) => state.updateCount);
   const updateDefaultWorkDuration = useCountStore((state) => state.updateDefaultWorkDuration);
@@ -104,15 +104,19 @@ function App() {
     countdown();
   }, 1000, status);
 
+  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 ";
+
   return (
-    <div className="h-screen w-screen font-sans select-none cursor-default text-white bg-neutral-800">
+    <div className={`${workType === WorkType.Work ? s+'text-red-600' : s+'text-green-600'}`}>
       <div className="flex flex-col">
-        <WorkTypeCom />
         <TimeCounterCom />
+        <div className="flex flex-row justify-center space-x-1">
+          <OperactionCom />
+          <RefreshCom />
+        </div>
       </div>
       <TodayCountCom />
-      <OperactionCom />
-      <RefreshCom />
+      <WorkTypeCom />
     </div>
   );
 }
