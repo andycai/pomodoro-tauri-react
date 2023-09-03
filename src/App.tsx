@@ -1,110 +1,118 @@
-import { useEffect, useRef, useState } from "react";
-import TimeCounterCom from "./components/TimeCounterCom";
-import OperactionCom from "./components/OperationCom";
-import TodayCountCom from "./components/TodayCountCom";
-import RefreshCom from "./components/RefreshCom";
-import { resolveResource } from "@tauri-apps/api/path";
-import { readTextFile } from "@tauri-apps/api/fs";
-import WorkTypeCom from "./components/WorkTypeCom";
-import { useCountStore } from "./store/store";
-import { LoadDataStatus, Status, WorkType } from "./config";
+import { useEffect, useRef, useState } from "react"
+import TimeCounterCom from "./components/TimeCounterCom"
+import OperactionCom from "./components/OperationCom"
+import TodayCountCom from "./components/TodayCountCom"
+import RefreshCom from "./components/RefreshCom"
+import { resolveResource } from "@tauri-apps/api/path"
+import { readTextFile } from "@tauri-apps/api/fs"
+import WorkTypeCom from "./components/WorkTypeCom"
+import { useCountStore } from "./store/store"
+import { LoadDataStatus, Status, WorkType } from "./config"
+import { getTodayKey } from "./utils"
 
-function convertDate() {
-  const date = new Date();
-  const key = `PomodoroTodayCount-${date.getFullYear()}${date.getMonth()+1}${date.getDate()}`;
-
-  return key;
-}
-
+/**
+ * 获取当天的番茄钟数量
+ */
 function getLocalToday() {
-  // console.log("getLocalToday: ", localStorage.getItem(convertDate()));
-  if (localStorage.getItem(convertDate()) === null) {
-    localStorage.setItem(convertDate(), "0");
+  // console.log("getLocalToday: ", localStorage.getItem(convertDate()))
+  let today = localStorage.getItem(getTodayKey())
+  if (today === null) {
+    today = "0"
   }
-  return Number(localStorage.getItem(convertDate()));
+  localStorage.setItem(getTodayKey(), "0")
+
+  return Number(today)
 }
 
-function saveLocalTodayCount(count: number) {
-  localStorage.setItem(convertDate(), count.toString());
+/**
+ * 保存当天的番茄钟数量
+ */
+function saveLocalTodayCount(daykey: string, count: number) {
+  localStorage.setItem(daykey, count.toString())
 }
 
 function useInterval(callback: any, delay: number, status: Status) {
-  const savedCallback = useRef(callback);
-  let id: any;
+  const savedCallback = useRef(callback)
+  let id: any
 
   useEffect(() => {
-    savedCallback.current = callback;
+    savedCallback.current = callback
   })
 
   useEffect(() => {
-    clearInterval(id);
+    clearInterval(id)
     function tick() {
-      savedCallback.current();
+      savedCallback.current()
     }
     if (status === Status.Tick) {
-      id = setInterval(tick, delay);
-      return () => clearInterval(id);
+      id = setInterval(tick, delay)
+      return () => clearInterval(id)
     }
-  }, [status]);
+  }, [status])
 }
 
 function App() {
-  console.log("render App");
-  const [status, today, workType] = useCountStore((state) => [state.status, state.today, state.workType]);
-  const updateToday = useCountStore((state) => state.updateToday);
-  const updateCount = useCountStore((state) => state.updateCount);
-  const updateDefaultWorkDuration = useCountStore((state) => state.updateDefaultWorkDuration);
-  const updateDefaultBreakDuration = useCountStore((state) => state.updateDefaultBreakDuration);
-  const countdown = useCountStore((state) => state.countdown);
-  const [loaded, setLoaded] = useState<LoadDataStatus>(LoadDataStatus.Idle);
+  console.log("render App")
+  const [status, today, workType, daykey] = useCountStore((state) => [state.status, state.today, state.workType, state.daykey])
+  const updateDaykey = useCountStore((state) => state.updateDaykey)
+  const updateToday = useCountStore((state) => state.updateToday)
+  const updateCount = useCountStore((state) => state.updateCount)
+  const updateDefaultWorkDuration = useCountStore((state) => state.updateDefaultWorkDuration)
+  const updateDefaultBreakDuration = useCountStore((state) => state.updateDefaultBreakDuration)
+  const countdown = useCountStore((state) => state.countdown)
+  const [loaded, setLoaded] = useState<LoadDataStatus>(LoadDataStatus.Idle)
 
   useEffect(() => {
-    // console.log("today: ", today);
     if (today > 0) {
-      saveLocalTodayCount(today); // 保存到 localStorage
+      if (daykey === getTodayKey()) { // 当天
+        saveLocalTodayCount(daykey, today) // 保存到 localStorage
+      } else {
+        updateDaykey(getTodayKey())
+        updateToday(1) // 隔天更新
+      }
     }
-  }, [today]);
+  }, [today])
 
   function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
     return useEffect(
       () => {
-        const cleanupPromise = effect();
+        const cleanupPromise = effect()
         return () => { cleanupPromise.then(cleanup => cleanup && cleanup()) }
       },
       deps
-    );
+    )
   }
 
   useAsyncEffect(
     async () => {
-      updateToday(getLocalToday());
+      updateToday(getLocalToday())
 
-      if (loaded !== LoadDataStatus.Idle) return;
-      setLoaded(LoadDataStatus.Loading);
-      const resourcePath = await resolveResource("resources/data.json");
-      const data = JSON.parse(await readTextFile(resourcePath));
+      if (loaded !== LoadDataStatus.Idle) return
+      setLoaded(LoadDataStatus.Loading)
+      const resourcePath = await resolveResource("resources/data.json")
+      const data = JSON.parse(await readTextFile(resourcePath))
 
       if (localStorage.getItem("defaultWorkDuration") === null) {
-        localStorage.setItem("defaultWorkDuration", data.defaultWorkDuration().toString());
+        localStorage.setItem("defaultWorkDuration", data.defaultWorkDuration().toString())
       }
 
       if (localStorage.getItem("defaultBreakDuration") === null) {
-        localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString());
+        localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString())
       }
 
-      updateDefaultWorkDuration(Number(localStorage.getItem("defaultWorkDuration")));
-      updateDefaultBreakDuration(Number(localStorage.getItem("defaultBreakDuration")));
-      updateCount(Number(localStorage.getItem("defaultWorkDuration")));
+      updateDefaultWorkDuration(Number(localStorage.getItem("defaultWorkDuration")))
+      updateDefaultBreakDuration(Number(localStorage.getItem("defaultBreakDuration")))
+      updateCount(Number(localStorage.getItem("defaultWorkDuration")))
 
-      setLoaded(LoadDataStatus.Loaded);
+      setLoaded(LoadDataStatus.Loaded)
     }, []
-  );
+  )
 
   useInterval(() => {
-    countdown();
-  }, 1000, status);
+    countdown()
+  }, 1000, status)
 
-  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 ";
+  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
 
   return (
     <div className={`${workType === WorkType.Work ? s+'text-red-600' : s+'text-green-600'}`}>
@@ -118,7 +126,7 @@ function App() {
       <TodayCountCom />
       <WorkTypeCom />
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
