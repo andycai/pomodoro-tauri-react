@@ -5,6 +5,8 @@ A simple Pomodoro Timer write in tauri and react.
 
 <img src="./screenshots/screenshot.png" width="290" height="132" alt="Screenshot of Pomodoro">
 
+<img src="./screenshots/screenshot_break.png" width="290" height="132" alt="Screenshot of Pomodoro">
+
 # Tauri + React + Typescript
 
 This template should help get you started developing with Tauri, React and Typescript in Vite.
