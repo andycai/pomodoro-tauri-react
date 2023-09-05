@@ -120,7 +120,7 @@ function App() {
         <TimeCounterCom />
         <div className="flex flex-row justify-center">
           <TodayCountCom />
-          <div className="flex flex-row grow justify-center space-x-1">
+          <div className="flex flex-row flex-1 grow justify-center space-x-1">
             <OperactionCom />
             <RefreshCom />
           </div>

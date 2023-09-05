@@ -8,7 +8,7 @@ function WorkTypeCom() {
   const workType = useCountStore((state) => state.workType)
   console.log("render Work Type", workType)
   // const className = "absolute bottom-1 right-1"
-  const className = "mr-2"
+  const className = "flex flex-row-reverse flex-none mr-2 w-10"
 
   return (
     <div className={className}>

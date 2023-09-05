@@ -6,7 +6,7 @@ function TodayCountCom() {
     const today = useCountStore((state) => state.today)
 
     // const className = "absolute bottom-1 left-1 flex align-bottom"
-    const className = "flex flex-row ml-2"
+    const className = "flex flex-row flex-none ml-2 w-10"
     console.log("render today count")
     return (
       <div className={className}>
