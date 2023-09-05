@@ -3,9 +3,9 @@ A simple Pomodoro Timer write in tauri and react.
 
 ## Screenshots
 
-<img src="./screenshots/screenshot.png" width="290" height="132" alt="Screenshot of Pomodoro">
+<img src="./screenshots/screenshot.png" width="332" height="142" alt="Screenshot of Pomodoro">
 
-<img src="./screenshots/screenshot_break.png" width="290" height="132" alt="Screenshot of Pomodoro">
+<img src="./screenshots/screenshot_break.png" width="332" height="152" alt="Screenshot of Pomodoro">
 
 # Tauri + React + Typescript
 
