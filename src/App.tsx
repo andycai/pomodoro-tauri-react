@@ -118,13 +118,15 @@ function App() {
     <div className={`${workType === WorkType.Work ? s+'text-red-600' : s+'text-green-600'}`}>
       <div className="flex flex-col">
         <TimeCounterCom />
-        <div className="flex flex-row justify-center space-x-1">
-          <OperactionCom />
-          <RefreshCom />
+        <div className="flex flex-row justify-center">
+          <TodayCountCom />
+          <div className="flex flex-row grow justify-center space-x-1">
+            <OperactionCom />
+            <RefreshCom />
+          </div>
+          <WorkTypeCom />
         </div>
       </div>
-      <TodayCountCom />
-      <WorkTypeCom />
     </div>
   )
 }
