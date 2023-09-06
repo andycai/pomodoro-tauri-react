@@ -122,7 +122,7 @@ function App() {
   const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
 
   return (
-    <div className={`${workType === WorkType.Work ? s+'text-red-600' : s+'text-green-600'}`}>
+    <div className={`${workType === WorkType.Work ? s+'text-green-600' : s+'text-red-500'}`}>
       <div className="flex flex-col">
         <TimeCounterCom />
         <div className="flex flex-row justify-center">
