@@ -9,7 +9,8 @@ type State = {
   status: Status
   workType: WorkType
   daykey: string
-  today: number
+  today: number // 当天番茄钟
+  total: number // 总番茄钟
 }
 
 type Actions = {
@@ -17,6 +18,7 @@ type Actions = {
   updateDefaultBreakDuration: (duration: number) => void
   updateDaykey: (key: string) => void
   updateToday: (count: number) => void
+  updateTotal: (count: number) => void
   updateCount: (count: number) => void
   countdown: () => void // 倒计时
   tick: () => void
@@ -31,6 +33,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
   workType: WorkType.Work,
   daykey: getTodayKey(),
   today: 0,
+  total: 0,
   updateDefaultWorkDuration: (duration: number) => {
     set({defaultWorkDuration: duration})
   },
@@ -43,6 +46,9 @@ export const useCountStore = create<State & Actions>()((set) => ({
   updateToday: (count: number) => {
     set({today: count})
   },
+  updateTotal: (total: number) => {
+    set({total: total})
+  },
   updateCount : (count: number) => {
     set({count: count})
   },
@@ -50,10 +56,12 @@ export const useCountStore = create<State & Actions>()((set) => ({
     set((state) => {
       if (state.count == 0) {
         let today: number = state.today
+        let total: number = state.total
         let count: number = state.defaultWorkDuration
         let workType: WorkType = WorkType.Work
         if (state.workType == WorkType.Work) {
           today = today + 1
+          total = total + 1
           count = state.defaultBreakDuration
           workType = WorkType.Break
         }
@@ -62,6 +70,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
           status: Status.Idle,
           workType: workType,
           today: today,
+          total: total,
         }
       }
       return ({count: state.count - 1})

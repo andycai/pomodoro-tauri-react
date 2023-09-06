@@ -4,14 +4,15 @@ import { useCountStore } from "../store/store"
 
 function TodayCountCom() {
     const today = useCountStore((state) => state.today)
+    const total = useCountStore((state) => state.total)
 
     // const className = "absolute bottom-1 left-1 flex align-bottom"
-    const className = "flex flex-row flex-none ml-2 w-10"
+    const className = "flex flex-row flex-none ml-2 w-20"
     console.log("render today count")
     return (
       <div className={className}>
         <ClockOutlineIcon size={24} />
-        <span className="text-xs pt-2">x{today}</span>
+        <span className="text-xs pt-2">x{today}/{total}</span>
       </div>
     )
 }

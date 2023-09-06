@@ -8,27 +8,25 @@ import { readTextFile } from "@tauri-apps/api/fs"
 import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
 import { LoadDataStatus, Status, WorkType } from "./config"
-import { getTodayKey } from "./utils"
+import { getTodayKey, getTotalKey } from "./utils"
 
 /**
- * 获取当天的番茄钟数量
+ * 获取当天/总的番茄钟数量
  */
-function getLocalToday() {
-  // console.log("getLocalToday: ", localStorage.getItem(convertDate()))
-  let today = localStorage.getItem(getTodayKey())
-  if (today === null) {
-    today = "0"
+function getLocalCount(key: string) {
+  console.log("getToday: ", localStorage.getItem(key))
+  if (localStorage.getItem(key) === null) {
+    localStorage.setItem(key, "0")
   }
-  localStorage.setItem(getTodayKey(), "0")
 
-  return Number(today)
+  return Number(localStorage.getItem(key))
 }
 
 /**
- * 保存当天的番茄钟数量
+ * 保存的番茄钟数量：当天|总数
  */
-function saveLocalTodayCount(daykey: string, count: number) {
-  localStorage.setItem(daykey, count.toString())
+function saveLocalPomodoroCount(key: string, count: number) {
+  localStorage.setItem(key, count.toString())
 }
 
 function useInterval(callback: any, delay: number, status: Status) {
@@ -53,9 +51,10 @@ function useInterval(callback: any, delay: number, status: Status) {
 
 function App() {
   console.log("render App")
-  const [status, today, workType, daykey] = useCountStore((state) => [state.status, state.today, state.workType, state.daykey])
+  const [status, today, total, workType, daykey] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey])
   const updateDaykey = useCountStore((state) => state.updateDaykey)
   const updateToday = useCountStore((state) => state.updateToday)
+  const updateTotal = useCountStore((state) => state.updateTotal)
   const updateCount = useCountStore((state) => state.updateCount)
   const updateDefaultWorkDuration = useCountStore((state) => state.updateDefaultWorkDuration)
   const updateDefaultBreakDuration = useCountStore((state) => state.updateDefaultBreakDuration)
@@ -65,13 +64,20 @@ function App() {
   useEffect(() => {
     if (today > 0) {
       if (daykey === getTodayKey()) { // 当天
-        saveLocalTodayCount(daykey, today) // 保存到 localStorage
+        saveLocalPomodoroCount(daykey, today) // 保存到 localStorage
       } else {
         updateDaykey(getTodayKey())
         updateToday(1) // 隔天更新
       }
     }
   }, [today])
+
+  useEffect(() => {
+    if (total > 0) {
+      console.log("total: ", total)
+      saveLocalPomodoroCount(getTotalKey("default"), total) // 保存到 localStorage
+    }
+  }, [total])
 
   function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
     return useEffect(
@@ -85,7 +91,8 @@ function App() {
 
   useAsyncEffect(
     async () => {
-      updateToday(getLocalToday())
+      updateToday(getLocalCount(getTodayKey()))
+      updateTotal(getLocalCount(getTotalKey("default")))
 
       if (loaded !== LoadDataStatus.Idle) return
       setLoaded(LoadDataStatus.Loading)
