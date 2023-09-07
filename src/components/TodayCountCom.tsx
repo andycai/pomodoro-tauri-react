@@ -8,11 +8,11 @@ function TodayCountCom() {
 
     // const className = "absolute bottom-1 left-1 flex align-bottom"
     const className = "flex flex-row flex-none ml-2 w-20"
-    console.log("render today count")
+    console.log("render today count: ", today, total)
     return (
       <div className={className}>
         <ClockOutlineIcon size={24} />
-        <span className="text-xs pt-2">x{today}/{total}</span>
+        <span className="text-xs pt-2">{total}/{today}</span>
       </div>
     )
 }

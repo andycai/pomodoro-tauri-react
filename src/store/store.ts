@@ -1,6 +1,5 @@
 import { create } from "zustand"
-import { DefaultBreakDuration, DefaultWorkDuration, Status, WorkType } from "../config"
-import { getTodayKey } from "../utils"
+import { DefaultBreakDuration, DefaultWorkDuration, Keys, Status, WorkType } from "../config"
 
 type State = {
   defaultWorkDuration: number
@@ -14,12 +13,11 @@ type State = {
 }
 
 type Actions = {
+  initData: (dw:number, db:number, today:number, total:number, count:number) => void
   updateDefaultWorkDuration: (duration: number) => void
   updateDefaultBreakDuration: (duration: number) => void
   updateDaykey: (key: string) => void
   updateToday: (count: number) => void
-  updateTotal: (count: number) => void
-  updateCount: (count: number) => void
   countdown: () => void // 倒计时
   tick: () => void
   reset: () => void
@@ -31,9 +29,18 @@ export const useCountStore = create<State & Actions>()((set) => ({
   count: DefaultWorkDuration,
   status: Status.Idle,
   workType: WorkType.Work,
-  daykey: getTodayKey(),
+  daykey: Keys.today(),
   today: 0,
   total: 0,
+  initData: (dw:number, db:number, today:number, total:number, count:number) => {
+    set({
+      defaultWorkDuration: dw,
+      defaultBreakDuration: db,
+      today: today,
+      total: total,
+      count: count,
+    })
+  },
   updateDefaultWorkDuration: (duration: number) => {
     set({defaultWorkDuration: duration})
   },
@@ -45,12 +52,6 @@ export const useCountStore = create<State & Actions>()((set) => ({
   },
   updateToday: (count: number) => {
     set({today: count})
-  },
-  updateTotal: (total: number) => {
-    set({total: total})
-  },
-  updateCount : (count: number) => {
-    set({count: count})
   },
   countdown: () => {
     set((state) => {

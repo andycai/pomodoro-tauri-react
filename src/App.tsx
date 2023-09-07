@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef } from "react"
 import TimeCounterCom from "./components/TimeCounterCom"
 import OperactionCom from "./components/OperationCom"
 import TodayCountCom from "./components/TodayCountCom"
@@ -7,27 +7,8 @@ import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
-import { LoadDataStatus, Status, WorkType } from "./config"
-import { getTodayKey, getTotalKey } from "./utils"
-
-/**
- * 获取当天/总的番茄钟数量
- */
-function getLocalCount(key: string) {
-  console.log("getToday: ", localStorage.getItem(key))
-  if (localStorage.getItem(key) === null) {
-    localStorage.setItem(key, "0")
-  }
-
-  return Number(localStorage.getItem(key))
-}
-
-/**
- * 保存的番茄钟数量：当天|总数
- */
-function saveLocalPomodoroCount(key: string, count: number) {
-  localStorage.setItem(key, count.toString())
-}
+import { INTERVAL, Keys, Status, Tasks, colors as TextColors, dataJsonURL } from "./config"
+import { getInt, initItem, saveItem } from "./store/local"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -51,22 +32,21 @@ function useInterval(callback: any, delay: number, status: Status) {
 
 function App() {
   console.log("render App")
+  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
   const [status, today, total, workType, daykey] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey])
   const updateDaykey = useCountStore((state) => state.updateDaykey)
   const updateToday = useCountStore((state) => state.updateToday)
-  const updateTotal = useCountStore((state) => state.updateTotal)
-  const updateCount = useCountStore((state) => state.updateCount)
-  const updateDefaultWorkDuration = useCountStore((state) => state.updateDefaultWorkDuration)
-  const updateDefaultBreakDuration = useCountStore((state) => state.updateDefaultBreakDuration)
+  const initData = useCountStore((state) => state.initData)
   const countdown = useCountStore((state) => state.countdown)
-  const [loaded, setLoaded] = useState<LoadDataStatus>(LoadDataStatus.Idle)
 
   useEffect(() => {
     if (today > 0) {
-      if (daykey === getTodayKey()) { // 当天
-        saveLocalPomodoroCount(daykey, today) // 保存到 localStorage
+      if (daykey === Keys.today()) { // 当天
+        // console.log("today: ", today)
+        saveItem(daykey, today.toString()) // 保存到 localStorage
       } else {
-        updateDaykey(getTodayKey())
+        // console.log("today2: ", today)
+        updateDaykey(Keys.today())
         updateToday(1) // 隔天更新
       }
     }
@@ -74,8 +54,8 @@ function App() {
 
   useEffect(() => {
     if (total > 0) {
-      console.log("total: ", total)
-      saveLocalPomodoroCount(getTotalKey("default"), total) // 保存到 localStorage
+      // console.log("total: ", total)
+      saveItem(Keys.total(Tasks.default), total.toString()) // 保存到 localStorage
     }
   }, [total])
 
@@ -91,38 +71,39 @@ function App() {
 
   useAsyncEffect(
     async () => {
-      updateToday(getLocalCount(getTodayKey()))
-      updateTotal(getLocalCount(getTotalKey("default")))
-
-      if (loaded !== LoadDataStatus.Idle) return
-      setLoaded(LoadDataStatus.Loading)
-      const resourcePath = await resolveResource("resources/data.json")
+      const resourcePath = await resolveResource(dataJsonURL)
       const data = JSON.parse(await readTextFile(resourcePath))
 
-      if (localStorage.getItem("defaultWorkDuration") === null) {
-        localStorage.setItem("defaultWorkDuration", data.defaultWorkDuration().toString())
-      }
+      initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
+      initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
+      initItem(Keys.today(), "0")
+      initItem(Keys.total(Tasks.default), "0")
 
-      if (localStorage.getItem("defaultBreakDuration") === null) {
-        localStorage.setItem("defaultBreakDuration", data.defaultBreakDuration.toString())
-      }
-
-      updateDefaultWorkDuration(Number(localStorage.getItem("defaultWorkDuration")))
-      updateDefaultBreakDuration(Number(localStorage.getItem("defaultBreakDuration")))
-      updateCount(Number(localStorage.getItem("defaultWorkDuration")))
-
-      setLoaded(LoadDataStatus.Loaded)
+      initData(
+        getInt(Keys.defaultWorkDuration),
+        getInt(Keys.defaultBreakDuration),
+        getInt(Keys.today()),
+        getInt(Keys.total(Tasks.default)),
+        getInt(Keys.defaultWorkDuration)
+      )
     }, []
   )
 
   useInterval(() => {
     countdown()
-  }, 1000, status)
+  }, INTERVAL, status)
 
-  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
+  // 字体和图标颜色
+  const className = useMemo(() => {
+    const index = Math.floor(today / 4)
+    const arr = TextColors[workType]??TextColors[1]
+    const color = arr[index]??arr[4]
+    // console.log("color", index, color)
+    return s + color 
+  }, [today, workType])
 
   return (
-    <div className={`${workType === WorkType.Work ? s+'text-green-600' : s+'text-red-500'}`}>
+    <div className={className}>
       <div className="flex flex-col">
         <TimeCounterCom />
         <div className="flex flex-row justify-center">
