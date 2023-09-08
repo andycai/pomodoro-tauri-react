@@ -12,6 +12,13 @@ export const initItem = (key: string, defaultValue: string) => {
 /**
  * 从 localStroge 获取int值
  */
+export const getIntDefault = (key: string, defaultValue: number) => {
+  return Number(localStorage.getItem(key)) || defaultValue
+}
+
+/**
+ * 从 localStroge 获取int值
+ */
 export const getInt = (key: string) => {
   return Number(localStorage.getItem(key))
 }

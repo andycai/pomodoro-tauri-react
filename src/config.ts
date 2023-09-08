@@ -50,10 +50,6 @@ export const Keys = {
   defaultWorkDuration: "defaultWorkDuration",
   defaultBreakDuration: "defaultBreakDuration",
 
-  isToday: (key: string) => {
-    return key == Keys.today()
-  },
-
   today: () => {
     const date = new Date();
     const key = "PomodoroTodayCount-" + date.getFullYear() + (date.getMonth()+1) + date.getDate();

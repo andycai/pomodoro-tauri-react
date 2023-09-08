@@ -1,9 +1,8 @@
 import { create } from "zustand"
 import { DefaultBreakDuration, DefaultWorkDuration, Keys, Status, WorkType } from "../config"
+import { getIntDefault } from "./local"
 
 type State = {
-  defaultWorkDuration: number
-  defaultBreakDuration: number
   count: number
   status: Status
   workType: WorkType
@@ -13,9 +12,7 @@ type State = {
 }
 
 type Actions = {
-  initData: (dw:number, db:number, today:number, total:number, count:number) => void
-  updateDefaultWorkDuration: (duration: number) => void
-  updateDefaultBreakDuration: (duration: number) => void
+  initData: (today:number, total:number, count:number) => void
   updateDaykey: (key: string) => void
   updateToday: (count: number) => void
   countdown: () => void // 倒计时
@@ -24,28 +21,18 @@ type Actions = {
 }
 
 export const useCountStore = create<State & Actions>()((set) => ({
-  defaultWorkDuration: DefaultWorkDuration,
-  defaultBreakDuration: DefaultBreakDuration,
-  count: DefaultWorkDuration,
+  count: getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration),
   status: Status.Idle,
   workType: WorkType.Work,
   daykey: Keys.today(),
   today: 0,
   total: 0,
-  initData: (dw:number, db:number, today:number, total:number, count:number) => {
+  initData: (today:number, total:number, count:number) => {
     set({
-      defaultWorkDuration: dw,
-      defaultBreakDuration: db,
       today: today,
       total: total,
       count: count,
     })
-  },
-  updateDefaultWorkDuration: (duration: number) => {
-    set({defaultWorkDuration: duration})
-  },
-  updateDefaultBreakDuration: (duration: number) => {
-    set({defaultBreakDuration: duration})
   },
   updateDaykey: (key: string) => {
     set({daykey: key})
@@ -58,12 +45,12 @@ export const useCountStore = create<State & Actions>()((set) => ({
       if (state.count == 0) {
         let today: number = state.today
         let total: number = state.total
-        let count: number = state.defaultWorkDuration
+        let count: number = getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration) 
         let workType: WorkType = WorkType.Work
         if (state.workType == WorkType.Work) {
           today = today + 1
           total = total + 1
-          count = state.defaultBreakDuration
+          count = getIntDefault(Keys.defaultBreakDuration, DefaultBreakDuration) 
           workType = WorkType.Break
         }
         return {
@@ -86,10 +73,10 @@ export const useCountStore = create<State & Actions>()((set) => ({
     })
   },
   reset: () => {
-    set((state) => ({
-      count: state.defaultWorkDuration,
+    set({
+      count: getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration),
       status: Status.Idle,
       workType: WorkType.Work,
-    }))
+    })
   },
 }))

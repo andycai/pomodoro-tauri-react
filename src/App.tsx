@@ -7,8 +7,8 @@ import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
-import { INTERVAL, Keys, Status, Tasks, colors as TextColors, dataJsonURL } from "./config"
-import { getInt, initItem, saveItem } from "./store/local"
+import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, colors as TextColors, dataJsonURL } from "./config"
+import { getIntDefault, initItem, saveItem } from "./store/local"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -30,6 +30,16 @@ function useInterval(callback: any, delay: number, status: Status) {
   }, [status])
 }
 
+function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
+  return useEffect(
+    () => {
+      const cleanupPromise = effect()
+      return () => { cleanupPromise.then(cleanup => cleanup && cleanup()) }
+    },
+    deps
+  )
+}
+
 function App() {
   console.log("render App")
   const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
@@ -38,6 +48,14 @@ function App() {
   const updateToday = useCountStore((state) => state.updateToday)
   const initData = useCountStore((state) => state.initData)
   const countdown = useCountStore((state) => state.countdown)
+
+  useEffect(() => {
+      initData(
+        getIntDefault(Keys.today(), 0),
+        getIntDefault(Keys.total(Tasks.default), 0),
+        getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration)
+      )
+  }, [])
 
   useEffect(() => {
     if (today > 0) {
@@ -59,33 +77,13 @@ function App() {
     }
   }, [total])
 
-  function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]) {
-    return useEffect(
-      () => {
-        const cleanupPromise = effect()
-        return () => { cleanupPromise.then(cleanup => cleanup && cleanup()) }
-      },
-      deps
-    )
-  }
-
+  // 加载配置数据
   useAsyncEffect(
     async () => {
       const resourcePath = await resolveResource(dataJsonURL)
       const data = JSON.parse(await readTextFile(resourcePath))
-
       initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
       initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
-      initItem(Keys.today(), "0")
-      initItem(Keys.total(Tasks.default), "0")
-
-      initData(
-        getInt(Keys.defaultWorkDuration),
-        getInt(Keys.defaultBreakDuration),
-        getInt(Keys.today()),
-        getInt(Keys.total(Tasks.default)),
-        getInt(Keys.defaultWorkDuration)
-      )
     }, []
   )
 
