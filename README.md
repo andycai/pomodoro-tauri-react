@@ -1,5 +1,5 @@
 # pomodoro
-A simple Pomodoro Timer write in tauri and react.
+A simple pomodoro timer write in Tauri and React.
 
 ## Screenshots
 

@@ -7,8 +7,9 @@ import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
-import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, colors as TextColors, dataJsonURL } from "./config"
+import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL } from "./config"
 import { getIntDefault, initItem, saveItem } from "./store/local"
+import { ClassContainer, TextColors } from "./style"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -42,7 +43,6 @@ function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]
 
 function App() {
   console.log("render App")
-  const s = "h-screen w-screen font-sans select-none cursor-default bg-stone-800 "
   const [status, today, total, workType, daykey] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey])
   const updateDaykey = useCountStore((state) => state.updateDaykey)
   const updateToday = useCountStore((state) => state.updateToday)
@@ -97,7 +97,7 @@ function App() {
     const arr = TextColors[workType]??TextColors[1]
     const color = arr[index]??arr[4]
     // console.log("color", index, color)
-    return s + color 
+    return ClassContainer + color 
   }, [today, workType])
 
   return (

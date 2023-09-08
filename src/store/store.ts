@@ -42,12 +42,12 @@ export const useCountStore = create<State & Actions>()((set) => ({
   },
   countdown: () => {
     set((state) => {
-      if (state.count == 0) {
+      if (state.count === 0) {
         let today: number = state.today
         let total: number = state.total
         let count: number = getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration) 
         let workType: WorkType = WorkType.Work
-        if (state.workType == WorkType.Work) {
+        if (state.workType === WorkType.Work) {
           today = today + 1
           total = total + 1
           count = getIntDefault(Keys.defaultBreakDuration, DefaultBreakDuration) 

@@ -1,5 +1,3 @@
-
-
 /**
  * 初始化localStorage
  */
