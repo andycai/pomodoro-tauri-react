@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-const useAudio = (url: string) => {
+export const useAudio = (url: string): [boolean, () => void] => {
     const [audio] = useState(new Audio(url))
     const [playing, setPlaying] = useState(false)
 
