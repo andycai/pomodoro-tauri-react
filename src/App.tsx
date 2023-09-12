@@ -7,9 +7,11 @@ import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
-import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL } from "./config"
+import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, didaAudioURL } from "./config"
 import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
+import { convertFileSrc } from "@tauri-apps/api/tauri"
+import { updateAudio } from "./utils"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -48,6 +50,7 @@ function App() {
   const updateToday = useCountStore((state) => state.updateToday)
   const initData = useCountStore((state) => state.initData)
   const countdown = useCountStore((state) => state.countdown)
+  // const updateAudio = useCountStore((state) => state.updateAudio)
 
   useEffect(() => {
       initData(
@@ -81,9 +84,17 @@ function App() {
   useAsyncEffect(
     async () => {
       const resourcePath = await resolveResource(dataJsonURL)
+      // console.log("json path:", resourcePath)
       const data = JSON.parse(await readTextFile(resourcePath))
       initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
       initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
+
+      const audioPath = await resolveResource(didaAudioURL)
+      const audioUrl = convertFileSrc(audioPath)
+      // console.log("audio url:", audioUrl)
+      const audio = new Audio(audioUrl)
+      audio.loop = true
+      updateAudio(audio)
     }, []
   )
 

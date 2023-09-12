@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 
-function CounterRenderProps({ children } : any) {
+export function CounterRenderProps({ children } : any) {
   const [count, setCount] = useState(0)
   const increment = useCallback(() => {
     setCount(count + 1)

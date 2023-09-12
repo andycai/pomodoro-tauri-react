@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-function useSingleton(callback: any) {
+export function useSingleton(callback: any) {
   const called = useRef(false)
   if (called.current) return 
   callback()

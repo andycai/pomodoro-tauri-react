@@ -18,6 +18,7 @@ export const DefaultWorkDuration = 1500
 export const DefaultBreakDuration = 300
 
 export const dataJsonURL = "resources/data.json"
+export const didaAudioURL = "resources/dida.mp3"
 
 export const Tasks = {
   default: "default",
