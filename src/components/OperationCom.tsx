@@ -15,7 +15,10 @@ function OperactionCom() {
     if (status === Status.Tick) {
       useAudio()?.play()
     } else {
-      useAudio()?.pause()
+      if (useAudio()) {
+        useAudio().currentTime = 0
+        useAudio().pause()
+      }
     }
   }, [status])
 
