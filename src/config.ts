@@ -1,6 +1,6 @@
 
 export enum Status {
-  Idle = 0,
+  Idle = 1,
   Pause,
   Tick,
 }
@@ -18,7 +18,15 @@ export const DefaultWorkDuration = 1500
 export const DefaultBreakDuration = 300
 
 export const dataJsonURL = "resources/data.json"
-export const didaAudioURL = "resources/dida.mp3"
+export const diAudioes = [
+  "resources/di01.MP3",
+  "resources/di02.MP3",
+  "resources/di03.MP3",
+  "resources/di04.MP3",
+]
+export const endAudioes = [
+  "resources/end01.MP3",
+]
 
 export const Tasks = {
   default: "default",

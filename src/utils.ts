@@ -4,12 +4,47 @@ export const convertTimeString = (count: number) : string => {
   return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`)
 }
 
-let audioEle: HTMLAudioElement
+let currentAudioIndex = 1
+let currentEndAudioIndex = 0
+const audioes: HTMLAudioElement[] = [];
+const endAudioes: HTMLAudioElement[] = [];
 
-export const updateAudio = (audio: HTMLAudioElement) => {
-  audioEle = audio
+export const addAudio = (audio: HTMLAudioElement) => {
+  audioes.push(audio)
 }
 
-export const useAudio = (): HTMLAudioElement => {
-  return audioEle
+export const playAudio = (isPlay: boolean): void => {
+  for (let audio of audioes) {
+    audio.currentTime = 0 
+    audio.pause()
+  }
+  if (isPlay) {
+    const index = currentAudioIndex > audioes.length - 1 ? 0 : currentAudioIndex
+    audioes[index]?.play() 
+  }
+}
+
+export const changeAudio = () => {
+  currentAudioIndex++
+  currentAudioIndex = currentAudioIndex % (audioes.length)
+}
+
+export const addEndAudio = (audio: HTMLAudioElement) => {
+  endAudioes.push(audio)
+}
+
+export const playEndAudio = (isPlay: boolean): void => {
+  for (let audio of endAudioes) {
+    audio.currentTime = 0 
+    audio.pause()
+  }
+  if (isPlay) {
+    const index = currentEndAudioIndex > endAudioes.length - 1 ? 0 : currentEndAudioIndex
+    endAudioes[index]?.play()
+  }
+}
+
+export const changeEndAudio = () => {
+  currentEndAudioIndex++
+  currentEndAudioIndex = currentEndAudioIndex % (endAudioes.length)
 }
