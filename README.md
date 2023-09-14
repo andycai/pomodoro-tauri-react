@@ -1,4 +1,4 @@
-# pomodoro
+# Pomodoro
 A simple pomodoro timer write in Tauri and React.
 
 ## Screenshots
@@ -24,7 +24,7 @@ npm install --save-dev @tauri-apps/cli@latest
 npm install
 ```
 
-## run project
+## Run project
 
 ```bash
 npm run tauri dev
