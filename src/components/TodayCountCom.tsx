@@ -7,7 +7,7 @@ function TodayCountCom() {
     const total = useCountStore((state) => state.total)
 
     // const className = "absolute bottom-1 left-1 flex align-bottom"
-    const className = "flex flex-row flex-none ml-2 w-20"
+    const className = "flex flex-row flex-none ml-2"
     console.log("render today count: ", today, total)
     return (
       <div className={className}>
