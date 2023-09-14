@@ -3,7 +3,7 @@ import { useCountStore } from "../store/store"
 import { WorkType } from "../config"
 import LaptopIcon from "mdi-react/LaptopIcon"
 import CoffeeOutlineIcon from "mdi-react/CoffeeOutlineIcon"
-import { changeAudio } from "../utils"
+import { changeAudio, playAudio } from "../utils"
 
 function WorkTypeCom() {
   const workType = useCountStore((state) => state.workType)
@@ -13,6 +13,7 @@ function WorkTypeCom() {
 
   const onClick = useCallback(() => {
     changeAudio()
+    playAudio(true)
   }, [])
 
   return (
