@@ -5,7 +5,6 @@ import TodayCountCom from "./components/TodayCountCom"
 import RefreshCom from "./components/RefreshCom"
 import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
-import WorkTypeCom from "./components/WorkTypeCom"
 import { useCountStore } from "./store/store"
 import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudioes, endAudioes } from "./config"
 import { getIntDefault, initItem, saveItem } from "./store/local"
@@ -119,13 +118,13 @@ function App() {
     <div className={className}>
       <div className="flex flex-col">
         <TimeCounterCom />
-        <div className="flex flex-row justify-center">
+        <div className="flex flex-row justify-center mt-2">
           <TodayCountCom />
-          <div className="flex flex-row flex-1 grow justify-center space-x-1">
-            <OperactionCom />
+          <div className="flex flex-row flex-1 grow justify-end space-x-1 mr-2">
             <RefreshCom />
+            <OperactionCom />
+            {/* <WorkTypeCom /> */}
           </div>
-          <WorkTypeCom />
         </div>
       </div>
     </div>

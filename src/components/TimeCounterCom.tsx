@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useCountStore } from "../store/store";
-import { convertTimeString } from "../utils";
+import { convertMinuteString, convertSecondString } from "../utils";
 
 function TimeCounterCom() {
   const count = useCountStore((state) => state.count);
@@ -8,7 +8,10 @@ function TimeCounterCom() {
   const className = "antialiased text-8xl font-black text-center ";
 
   return (
-    <h1 className={className}>{convertTimeString(count)}</h1>
+    <>
+      <h1 className={className}>{convertMinuteString(count)}</h1>
+      <h1 className={className}>{convertSecondString(count)}</h1>
+    </>
   );
 }
 

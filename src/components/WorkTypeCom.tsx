@@ -9,7 +9,7 @@ function WorkTypeCom() {
   const workType = useCountStore((state) => state.workType)
   console.log("render Work Type", workType)
   // const className = "absolute bottom-1 right-1"
-  const className = "flex flex-row-reverse flex-none mr-2 w-20"
+  // const className = "flex flex-row-reverse flex-none mr-2"
 
   const onClick = useCallback(() => {
     changeAudio()
@@ -17,11 +17,11 @@ function WorkTypeCom() {
   }, [])
 
   return (
-    <div className={className}>
+    <>
     {
       workType === WorkType.Work ? <LaptopIcon size={24} onClick={onClick} /> : <CoffeeOutlineIcon size={24} />
     }
-    </div>
+    </>
   )
 }
 
