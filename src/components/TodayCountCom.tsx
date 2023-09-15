@@ -15,8 +15,7 @@ function TodayCountCom() {
     console.log("render today count: ", today, total)
 
     const onClick = useCallback(() => {
-      changeAudio()
-      playAudio(true)
+      playAudio(changeAudio())
     }, [])
 
     return (
