@@ -3,9 +3,9 @@ A simple pomodoro timer write in Tauri and React.
 
 ## Screenshots
 
-<img src="./screenshots/screenshot.png" width="160" height="238" alt="Screenshot of Pomodoro">
+<img src="./screenshots/screenshot.png" width="140" height="184" alt="Screenshot of Pomodoro">
 
-<img src="./screenshots/screenshot_break.png" width="160" height="238" alt="Screenshot of Pomodoro">
+<img src="./screenshots/screenshot_break.png" width="140" height="184" alt="Screenshot of Pomodoro">
 
 # Tauri + React + Typescript
 
@@ -19,8 +19,6 @@ This template should help get you started developing with Tauri, React and Types
 ## Install Tauri support
 
 ```bash
-npm create tauri-app@latest
-npm install --save-dev @tauri-apps/cli@latest
 npm install
 ```
 

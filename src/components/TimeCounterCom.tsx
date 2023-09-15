@@ -10,8 +10,8 @@ function TimeCounterCom() {
 
   return (
     <div className="flex flex-col items-end font-black" data-tauri-drag-region>
-      <h4 className="text-6xl mr-2" onClick={() => appWindow.close()} data-tauri-drag-region>{convertSecondString(count)}</h4>
-      <h1 className="text-8xl mr-2" data-tauri-drag-region>{convertMinuteString(count)}</h1>
+      <h4 className="text-6xl mr-1" onClick={() => appWindow.close()} data-tauri-drag-region>{convertSecondString(count)}</h4>
+      <h1 className="text-8xl mr-1" data-tauri-drag-region>{convertMinuteString(count)}</h1>
     </div>
   );
 }
