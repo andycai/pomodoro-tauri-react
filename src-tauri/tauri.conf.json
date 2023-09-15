@@ -62,9 +62,13 @@
     "security": {
       "csp": null
     },
+    "systemTray": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
     "windows": [
       {
-        "label": "customization",
+        "label": "main",
         "fullscreen": false,
         "resizable": false,
         "decorations": false,
