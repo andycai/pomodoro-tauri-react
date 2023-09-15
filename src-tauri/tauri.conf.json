@@ -71,7 +71,7 @@
         "setSkipTaskbar": false,
         "setTitle": false,
         "show": false,
-        "startDragging": false,
+        "startDragging": true,
         "unmaximize": false,
         "unminimize": false
       }
@@ -97,14 +97,18 @@
     },
     "windows": [
       {
+        "label": "customization",
         "fullscreen": false,
         "resizable": false,
+        "minimizable": false,
+        "maximizable": false,
+        "decorations": false,
         "alwaysOnTop": true,
         "contentProtected": false,
         "fileDropEnabled": false,
         "title": "Pomodoro",
-        "width": 160,
-        "height": 238
+        "width": 140,
+        "height": 184 
       }
     ]
   }

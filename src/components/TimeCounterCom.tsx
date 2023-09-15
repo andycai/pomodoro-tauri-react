@@ -1,17 +1,18 @@
 import { memo } from "react";
 import { useCountStore } from "../store/store";
 import { convertMinuteString, convertSecondString } from "../utils";
+import { appWindow } from "@tauri-apps/api/window";
 
 function TimeCounterCom() {
   const count = useCountStore((state) => state.count);
   console.log("render TimeCounter", count);
-  const className = "antialiased text-8xl font-black text-center ";
+  // const className = "font-black";
 
   return (
-    <>
-      <h1 className={className}>{convertMinuteString(count)}</h1>
-      <h1 className={className}>{convertSecondString(count)}</h1>
-    </>
+    <div className="flex flex-col items-end font-black" data-tauri-drag-region>
+      <h4 className="text-6xl mr-2" onClick={() => appWindow.close()} data-tauri-drag-region>{convertSecondString(count)}</h4>
+      <h1 className="text-8xl mr-2" data-tauri-drag-region>{convertMinuteString(count)}</h1>
+    </div>
   );
 }
 
