@@ -18,13 +18,13 @@ export const DefaultWorkDuration = 1500
 export const DefaultBreakDuration = 300
 
 export const dataJsonURL = "resources/data.json"
-export const diAudioes = [
+export const diAudioPaths = [
   "resources/di01.MP3",
   "resources/di02.MP3",
   "resources/di03.MP3",
   "resources/di04.MP3",
 ]
-export const endAudioes = [
+export const endAudioPaths = [
   "resources/end01.MP3",
 ]
 

@@ -6,7 +6,7 @@ import RefreshCom from "./components/RefreshCom"
 import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { useCountStore } from "./store/store"
-import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudioes, endAudioes } from "./config"
+import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudioPaths, endAudioPaths } from "./config"
 import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
 import { convertFileSrc } from "@tauri-apps/api/tauri"
@@ -87,16 +87,17 @@ function App() {
       initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
       initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
 
-      for (let v of diAudioes) {
+      for (let v of diAudioPaths) {
+        // console.log("path: ", v)
         const audioPath = await resolveResource(v)
         const audio = new Audio(convertFileSrc(audioPath))
         audio.loop = true
-        addAudio(audio)
+        addAudio(v, audio)
       }
 
-      for (let v of endAudioes) {
+      for (let v of endAudioPaths) {
         const audioPath = await resolveResource(v)
-        addEndAudio(new Audio(convertFileSrc(audioPath)))
+        addEndAudio(v, new Audio(convertFileSrc(audioPath)))
       }
     }, []
   )
