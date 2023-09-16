@@ -10,10 +10,10 @@
     "tauri": "tauri"
   },
   "eslintConfig": {
-    "plugins":[
+    "plugins": [
       "react-hooks"
     ],
-    "rules":{
+    "rules": {
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn"
     }
@@ -22,6 +22,7 @@
     "@tauri-apps/api": "^1.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "mdi-react": "^9.2.0",
     "zustand": "^4.4.1"
   },
   "devDependencies": {
