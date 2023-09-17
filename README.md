@@ -3,9 +3,9 @@ A simple pomodoro timer write in Tauri and React.
 
 [Click to Download](https://github.com/andycai/pomodoro/releases)
 
-- [macOs](https://github.com/andycai/pomodoro/releases/download/untagged-d5e625351bf1791ac87f/Pomodoro_0.6.0_x64.dmg)
-- [Windows](https://github.com/andycai/pomodoro/releases/download/untagged-d5e625351bf1791ac87f/Pomodoro_0.6.0_x64-setup.exe)
-- [Linux](https://github.com/andycai/pomodoro/releases/download/untagged-d5e625351bf1791ac87f/pomodoro_0.6.0_amd64.deb)
+- [macOs](https://github.com/andycai/pomodoro/releases/download/v0.6.0/Pomodoro_0.6.0_x64.dmg)
+- [Windows](https://github.com/andycai/pomodoro/releases/download/v0.6.0/Pomodoro_0.6.0_x64-setup.exe)
+- [Linux](https://github.com/andycai/pomodoro/releases/download/v0.6.0/pomodoro_0.6.0_amd64.deb)
 
 ## Screenshots
 
