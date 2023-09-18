@@ -11,7 +11,7 @@ function TodayCountCom() {
     const workType = useCountStore((state) => state.workType)
 
     // const className = "absolute bottom-1 left-1 flex align-bottom"
-    const className = "flex flex-row flex-none ml-2"
+    const className = "flex flex-row flex-none ml-1"
     console.log("render today count: ", today, total)
 
     const onClick = useCallback(() => {

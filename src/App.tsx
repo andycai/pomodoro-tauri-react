@@ -124,7 +124,7 @@ function App() {
         <TimeCounterCom />
         <div className="flex flex-row justify-center mt-1">
           <TodayCountCom />
-          <div className="flex flex-row flex-1 grow justify-end space-x-1 mr-2">
+          <div className="flex flex-row flex-1 grow justify-end space-x-1 mr-1">
             <RefreshCom />
             <OperactionCom />
             {/* <WorkTypeCom /> */}
