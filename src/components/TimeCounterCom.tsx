@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { useCountStore } from "../store/store";
 import { convertMinuteString, convertSecondString } from "../utils";
-import { appWindow } from "@tauri-apps/api/window";
 
 function TimeCounterCom() {
   const count = useCountStore((state) => state.count);
@@ -9,9 +8,9 @@ function TimeCounterCom() {
   // const className = "font-black";
 
   return (
-    <div className="flex flex-col items-end font-black" data-tauri-drag-region>
-      <h4 className="text-6xl mr-1" onClick={() => appWindow.close()} data-tauri-drag-region>{convertSecondString(count)}</h4>
-      <h1 className="text-8xl mr-1" data-tauri-drag-region>{convertMinuteString(count)}</h1>
+    <div className="flex flex-col items-center font-black" data-tauri-drag-region>
+      <h1 className="text-7xl" data-tauri-drag-region>{convertMinuteString(count)}</h1>
+      <h4 className="text-7xl" data-tauri-drag-region>{convertSecondString(count)}</h4>
     </div>
   );
 }

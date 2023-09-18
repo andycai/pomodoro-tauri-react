@@ -4,6 +4,7 @@ import { changeAudio, playAudio } from "../utils"
 import { WorkType } from "../config"
 import CoffeeOutlineIcon from "mdi-react/CoffeeOutlineIcon"
 import ClockOutlineIcon from "mdi-react/ClockOutlineIcon"
+import { appWindow } from "@tauri-apps/api/window"
 
 function TodayCountCom() {
     const today = useCountStore((state) => state.today)
@@ -23,7 +24,7 @@ function TodayCountCom() {
         {
           workType === WorkType.Work ? <ClockOutlineIcon size={24} onClick={onClick} /> : <CoffeeOutlineIcon size={24}  onClick={onClick} />
         }
-        <span className="text-xs pt-2">{total}/{today}</span>
+        <span className="text-xs pt-2" onClick={() => appWindow.close()}>{total}/{today}</span>
       </div>
     )
 }
