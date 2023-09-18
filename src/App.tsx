@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
+import CloseIcon from "mdi-react/WindowCloseIcon"
 import TimeCounterCom from "./components/TimeCounterCom"
 import OperactionCom from "./components/OperationCom"
 import TodayCountCom from "./components/TodayCountCom"
@@ -11,6 +12,7 @@ import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
 import { convertFileSrc } from "@tauri-apps/api/tauri"
 import { addAudio, addEndAudio } from "./utils"
+import { appWindow } from "@tauri-apps/api/window"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -117,6 +119,7 @@ function App() {
 
   return (
     <div className={className}>
+      <CloseIcon className="cursor-pointer absolute right-0" size={14} onClick={() => appWindow.close()} />
       <div className="flex flex-col">
         <TimeCounterCom />
         <div className="flex flex-row justify-center mt-1">
