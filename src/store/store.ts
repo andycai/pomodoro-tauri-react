@@ -12,7 +12,7 @@ type State = {
 }
 
 type Actions = {
-  initData: (today:number, total:number, count:number) => void
+  initData: (today: number, total: number, count: number) => void
   updateDaykey: (key: string) => void
   updateToday: (count: number) => void
   countdown: () => void // 倒计时
@@ -27,7 +27,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
   daykey: Keys.today(),
   today: 0,
   total: 0,
-  initData: (today:number, total:number, count:number) => {
+  initData: (today: number, total: number, count: number) => {
     set({
       today: today,
       total: total,
