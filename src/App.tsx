@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from "react"
 import CloseIcon from "mdi-react/WindowCloseIcon"
 import TimeCounterCom from "./components/TimeCounterCom"
-import OperactionCom from "./components/OperationCom"
+import OperationCom from "./components/OperationCom"
 import TodayCountCom from "./components/TodayCountCom"
 import RefreshCom from "./components/RefreshCom"
 import { resolveResource } from "@tauri-apps/api/path"
@@ -126,7 +126,7 @@ function App() {
           <TodayCountCom />
           <div className="flex flex-row flex-1 grow justify-end space-x-1 mr-1">
             <RefreshCom />
-            <OperactionCom />
+            <OperationCom />
             {/* <WorkTypeCom /> */}
           </div>
         </div>

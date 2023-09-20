@@ -5,7 +5,7 @@ import { useCountStore } from "../store/store"
 import { Status } from "../config"
 import { playAudio, playEndAudio } from "../utils"
 
-function OperactionCom() {
+function OperationCom() {
   console.log("render Operaction")
   const status = useCountStore((state) => state.status)
   const tick = useCountStore((state) => state.tick)
@@ -28,4 +28,4 @@ function OperactionCom() {
   )
 }
 
-export default memo(OperactionCom)
+export default memo(OperationCom)
