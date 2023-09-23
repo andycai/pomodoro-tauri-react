@@ -89,7 +89,7 @@ function App() {
       initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
       initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
 
-      for (let v of diAudioPaths) {
+      for (const v of diAudioPaths) {
         // console.log("path: ", v)
         const audioPath = await resolveResource(v)
         const audio = new Audio(convertFileSrc(audioPath))
@@ -97,7 +97,7 @@ function App() {
         addAudio(v, audio)
       }
 
-      for (let v of endAudioPaths) {
+      for (const v of endAudioPaths) {
         const audioPath = await resolveResource(v)
         addEndAudio(v, new Audio(convertFileSrc(audioPath)))
       }

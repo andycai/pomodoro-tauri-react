@@ -12,8 +12,8 @@ export const convertTimeString = (count: number) : string => {
   return (`${Math.floor(count / ONE_MINUTE)}:${Math.floor(count % ONE_MINUTE) < 10 ? "0" : ""}${count % ONE_MINUTE}`)
 }
 
-let audioObjs = new Map();
-let endAudioObjs = new Map();
+const audioObjs = new Map();
+const endAudioObjs = new Map();
 
 let currentAudioIndex = 0
 let currentEndAudioIndex = 0
