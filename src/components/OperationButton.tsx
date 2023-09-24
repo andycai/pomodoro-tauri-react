@@ -1,15 +1,14 @@
-import PauseCircleOutlineIcon from "mdi-react/PauseCircleOutlineIcon"
-import PlayCircleOutlineIcon from "mdi-react/PlayCircleOutlineIcon"
 import { memo, useEffect } from "react"
 import { useCountStore } from "../store/store"
 import { Status } from "../config"
 import { playAudio, playEndAudio } from "../utils"
+import { Pause } from "../icons/pause"
+import { Play } from "../icons/play"
 
-function OperationCom() {
+function OperationButton() {
   console.log("render Operaction")
   const status = useCountStore((state) => state.status)
   const tick = useCountStore((state) => state.tick)
-  const className = "cursor-pointer"
 
   useEffect(() => {
     playAudio(status === Status.Tick)
@@ -17,15 +16,12 @@ function OperationCom() {
   }, [status])
 
   return (
-    <>
+    <button className="flex flex-row justify-center basis-1/2" title="Play or Pause" onClick={tick} >
       {
-        (status === Status.Tick)  ?
-          (<PauseCircleOutlineIcon className={className} size={24} onClick={tick} />)
-        :
-          (<PlayCircleOutlineIcon className={className} size={24} onClick={tick} />)
+        (status === Status.Tick)  ? <Pause width={22} height={22} /> : <Play width={22} height={22} />
       }
-    </>
+    </button>
   )
 }
 
-export default memo(OperationCom)
+export default memo(OperationButton)

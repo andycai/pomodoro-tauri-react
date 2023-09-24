@@ -2,10 +2,9 @@ import { memo } from "react";
 import { useCountStore } from "../store/store";
 import { convertMinuteString, convertSecondString } from "../utils";
 
-function TimeCounterCom() {
+function TimeCounter() {
   const count = useCountStore((state) => state.count);
   console.log("render TimeCounter", count);
-  // const className = "font-black";
 
   return (
     <div className="flex flex-col items-center font-black" data-tauri-drag-region>
@@ -15,4 +14,4 @@ function TimeCounterCom() {
   );
 }
 
-export default memo(TimeCounterCom);
+export default memo(TimeCounter);

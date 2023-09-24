@@ -1,9 +1,5 @@
 import { useEffect, useMemo, useRef } from "react"
-import CloseIcon from "mdi-react/WindowCloseIcon"
-import TimeCounterCom from "./components/TimeCounterCom"
-import OperationCom from "./components/OperationCom"
-import TodayCountCom from "./components/TodayCountCom"
-import RefreshCom from "./components/RefreshCom"
+import TimeCounter from "./components/TimeCounter"
 import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
 import { useCountStore } from "./store/store"
@@ -12,7 +8,8 @@ import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
 import { convertFileSrc } from "@tauri-apps/api/tauri"
 import { addAudio, addEndAudio } from "./utils"
-import { appWindow } from "@tauri-apps/api/window"
+import Appbar from "./components/AppBar"
+import Footbar from "./components/FootBar"
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -46,12 +43,11 @@ function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]
 
 function App() {
   console.log("render App")
-  const [status, today, total, workType, daykey] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey])
+  const [status, today, total, workType, daykey, theme] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey, state.theme])
   const updateDaykey = useCountStore((state) => state.updateDaykey)
   const updateToday = useCountStore((state) => state.updateToday)
   const initData = useCountStore((state) => state.initData)
   const countdown = useCountStore((state) => state.countdown)
-  // const updateAudio = useCountStore((state) => state.updateAudio)
 
   useEffect(() => {
       initData(
@@ -64,10 +60,8 @@ function App() {
   useEffect(() => {
     if (today > 0) {
       if (daykey === Keys.today()) { // 当天
-        // console.log("today: ", today)
         saveItem(daykey, today.toString()) // 保存到 localStorage
       } else {
-        // console.log("today2: ", today)
         updateDaykey(Keys.today())
         updateToday(1) // 隔天更新
       }
@@ -76,7 +70,6 @@ function App() {
 
   useEffect(() => {
     if (total > 0) {
-      // console.log("total: ", total)
       saveItem(Keys.total(Tasks.default), total.toString()) // 保存到 localStorage
     }
   }, [total])
@@ -110,27 +103,16 @@ function App() {
 
   // 字体和图标颜色
   const className = useMemo(() => {
-    const index = Math.floor(today / 4)
     const arr = TextColors[workType]??TextColors[1]
-    const color = arr[index]??arr[4]
-    // console.log("color", index, color)
+    const color = arr[theme]??arr[4]
     return ClassContainer + color 
-  }, [today, workType])
+  }, [theme, workType])
 
   return (
     <div className={className}>
-      <CloseIcon className="cursor-pointer absolute right-0" size={14} onClick={() => appWindow.close()} />
-      <div className="flex flex-col">
-        <TimeCounterCom />
-        <div className="flex flex-row justify-center mt-1">
-          <TodayCountCom />
-          <div className="flex flex-row flex-1 grow justify-end space-x-1 mr-1">
-            <RefreshCom />
-            <OperationCom />
-            {/* <WorkTypeCom /> */}
-          </div>
-        </div>
-      </div>
+      <Appbar />
+      <TimeCounter />
+      <Footbar />
     </div>
   )
 }

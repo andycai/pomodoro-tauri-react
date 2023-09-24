@@ -1,3 +1,4 @@
+export const themeNum = 5
 export const TextColors = [
     [],
     [

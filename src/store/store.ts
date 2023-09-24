@@ -1,6 +1,7 @@
 import { create } from "zustand"
-import { DefaultBreakDuration, DefaultWorkDuration, Keys, Status, WorkType } from "../config"
+import { DefaultBreakDuration, DefaultWorkDuration, Keys, MagicNumber, Status, WorkType } from "../config"
 import { getIntDefault } from "./local"
+import { themeNum } from "../style"
 
 type State = {
   count: number
@@ -9,6 +10,7 @@ type State = {
   daykey: string
   today: number // 当天番茄钟
   total: number // 总番茄钟
+  theme: number
 }
 
 type Actions = {
@@ -18,6 +20,7 @@ type Actions = {
   countdown: () => void // 倒计时
   tick: () => void
   reset: () => void
+  changeTheme: () => void
 }
 
 export const useCountStore = create<State & Actions>()((set) => ({
@@ -27,6 +30,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
   daykey: Keys.today(),
   today: 0,
   total: 0,
+  theme: 0,
   initData: (today: number, total: number, count: number) => {
     set({
       today: today,
@@ -46,10 +50,14 @@ export const useCountStore = create<State & Actions>()((set) => ({
         let today: number = state.today
         let total: number = state.total
         let count: number = getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration) 
+        let theme: number = state.theme
         let workType: WorkType = WorkType.Work
         if (state.workType === WorkType.Work) {
           today = today + 1
           total = total + 1
+          if (today % MagicNumber === 0) {
+            theme = (theme + 1) % themeNum
+          }
           count = getIntDefault(Keys.defaultBreakDuration, DefaultBreakDuration) 
           workType = WorkType.Break
         }
@@ -59,6 +67,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
           workType: workType,
           today: today,
           total: total,
+          theme: theme
         }
       }
       return ({count: state.count - 1})
@@ -77,6 +86,11 @@ export const useCountStore = create<State & Actions>()((set) => ({
       count: getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration),
       status: Status.Idle,
       workType: WorkType.Work,
+    })
+  },
+  changeTheme: () => {
+    set((state) => {
+      return { theme: (state.theme + 1) % themeNum }
     })
   },
 }))

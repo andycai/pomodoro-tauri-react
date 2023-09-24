@@ -10,6 +10,7 @@ export enum WorkType {
   Break,
 }
 
+export const MagicNumber = 3
 export const INTERVAL = 1000
 
 export const ONE_MINUTE = 60
