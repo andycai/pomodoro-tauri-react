@@ -7,7 +7,7 @@ import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudi
 import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
 import { convertFileSrc } from "@tauri-apps/api/tauri"
-import { addAudio, addEndAudio } from "./utils"
+import { addAudio, addEndAudio, convertThemeStyle } from "./utils"
 import Appbar from "./components/AppBar"
 import Footbar from "./components/FootBar"
 
@@ -83,14 +83,12 @@ function App() {
   }, INTERVAL, status)
 
   // 字体和图标颜色
-  const className = useMemo(() => {
-    const arr = TextColors[workType]??TextColors[1]
-    const color = arr[theme]??arr[4]
-    return ClassContainer + color 
+  const themeStyle = useMemo(() => {
+    return convertThemeStyle(workType, theme)
   }, [theme, workType])
 
   return (
-    <div className={className}>
+    <div className={themeStyle}>
       <Appbar />
       <TimeCounter />
       <Footbar />
