@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react"
-import { useCountStore } from "../store/store"
+import { useStore } from "../store/store"
 import { Status } from "../config"
 import { playAudio, playEndAudio } from "../utils"
 import { Pause } from "../icons/pause"
@@ -7,8 +7,8 @@ import { Play } from "../icons/play"
 
 function OperationButton() {
   console.log("render Operaction")
-  const status = useCountStore((state) => state.status)
-  const tick = useCountStore((state) => state.tick)
+  const status = useStore((state) => state.status)
+  const tick = useStore((state) => state.tick)
 
   useEffect(() => {
     playAudio(status === Status.Tick)

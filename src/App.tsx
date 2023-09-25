@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react"
 import TimeCounter from "./components/TimeCounter"
 import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
-import { useCountStore } from "./store/store"
+import { useStore } from "./store/store"
 import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudioPaths, endAudioPaths } from "./config"
 import { getIntDefault, initItem, saveItem } from "./store/local"
 import { ClassContainer, TextColors } from "./style"
@@ -43,11 +43,9 @@ function useAsyncEffect(effect: () => Promise<void | (() => void)>, deps?: any[]
 
 function App() {
   console.log("render App")
-  const [status, today, total, workType, daykey, theme] = useCountStore((state) => [state.status, state.today, state.total, state.workType, state.daykey, state.theme])
-  const updateDaykey = useCountStore((state) => state.updateDaykey)
-  const updateToday = useCountStore((state) => state.updateToday)
-  const initData = useCountStore((state) => state.initData)
-  const countdown = useCountStore((state) => state.countdown)
+  const [status, workType, theme] = useStore((state) => [state.status, state.workType, state.theme])
+  const initData = useStore((state) => state.initData)
+  const countdown = useStore((state) => state.countdown)
 
   useEffect(() => {
       initData(
@@ -56,23 +54,6 @@ function App() {
         getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration)
       )
   }, [])
-
-  useEffect(() => {
-    if (today > 0) {
-      if (daykey === Keys.today()) { // 当天
-        saveItem(daykey, today.toString()) // 保存到 localStorage
-      } else {
-        updateDaykey(Keys.today())
-        updateToday(1) // 隔天更新
-      }
-    }
-  }, [today])
-
-  useEffect(() => {
-    if (total > 0) {
-      saveItem(Keys.total(Tasks.default), total.toString()) // 保存到 localStorage
-    }
-  }, [total])
 
   // 加载配置数据
   useAsyncEffect(

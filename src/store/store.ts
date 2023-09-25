@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import { DefaultBreakDuration, DefaultWorkDuration, Keys, MagicNumber, Status, WorkType } from "../config"
-import { getIntDefault } from "./local"
+import { DefaultBreakDuration, DefaultWorkDuration, Keys, MagicNumber, Status, Tasks, WorkType } from "../config"
+import { getIntDefault, saveItem } from "./local"
 import { themeNum } from "../style"
 
 type State = {
@@ -23,7 +23,7 @@ type Actions = {
   changeTheme: () => void
 }
 
-export const useCountStore = create<State & Actions>()((set) => ({
+export const useStore = create<State & Actions>()((set) => ({
   count: getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration),
   status: Status.Idle,
   workType: WorkType.Work,
@@ -49,6 +49,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
       if (state.count === 0) {
         let today: number = state.today
         let total: number = state.total
+        let daykey: string = state.daykey
         let count: number = getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration) 
         let theme: number = state.theme
         let workType: WorkType = WorkType.Work
@@ -60,6 +61,13 @@ export const useCountStore = create<State & Actions>()((set) => ({
           }
           count = getIntDefault(Keys.defaultBreakDuration, DefaultBreakDuration) 
           workType = WorkType.Break
+          if (daykey === Keys.today()) {
+            saveItem(Keys.today(), today.toString())
+          } else {
+            daykey = Keys.today()
+            today = 1 // 隔天更新
+          }
+          saveItem(Keys.total(Tasks.default), total.toString())
         }
         return {
           count: count,
@@ -67,6 +75,7 @@ export const useCountStore = create<State & Actions>()((set) => ({
           workType: workType,
           today: today,
           total: total,
+          daykey: daykey,
           theme: theme
         }
       }

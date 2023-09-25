@@ -1,13 +1,13 @@
 import { memo } from "react"
-import { useCountStore } from "../store/store"
+import { useStore } from "../store/store"
 import { Status, WorkType } from "../config"
 import { Refresh } from "../icons/refresh"
 
 function RefreshButton() {
     console.log("render refresh")
-    const reset = useCountStore((state) => state.reset)
-    const status = useCountStore((state) => state.status)
-    const workType = useCountStore((state) => state.workType)
+    const reset = useStore((state) => state.reset)
+    const status = useStore((state) => state.status)
+    const workType = useStore((state) => state.workType)
 
     return (
       <button className="flex flex-row justify-end basis-1/4" title="Reset" onClick={reset}>

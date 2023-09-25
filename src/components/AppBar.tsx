@@ -5,10 +5,10 @@ import { Volume } from '../icons/volume'
 import { VolumeMute } from '../icons/volume-mute'
 import { changeAudio, playAudio } from '../utils'
 import { memo, useCallback, useState } from 'react'
-import { useCountStore } from '../store/store'
+import { useStore } from '../store/store'
 
 function AppBar() {
-  const [status, today, total] = useCountStore((state) => [state.status, state.today, state.total])
+  const [status, today, total] = useStore((state) => [state.status, state.today, state.total])
   const [musicOff, setMusicOff] = useState(false)
 
   const onClick = useCallback(() => {

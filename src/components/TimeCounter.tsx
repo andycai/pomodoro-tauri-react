@@ -1,9 +1,9 @@
 import { memo } from "react";
-import { useCountStore } from "../store/store";
+import { useStore } from "../store/store";
 import { convertMinuteString, convertSecondString } from "../utils";
 
 function TimeCounter() {
-  const count = useCountStore((state) => state.count);
+  const count = useStore((state) => state.count);
   console.log("render TimeCounter", count);
 
   return (
