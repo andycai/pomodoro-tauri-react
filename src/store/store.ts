@@ -36,13 +36,8 @@ export const useStore = create<State & Actions>()((set) => ({
       today: today,
       total: total,
       count: count,
+      theme: Math.floor(today / MagicNumber)
     })
-  },
-  updateDaykey: (key: string) => {
-    set({daykey: key})
-  },
-  updateToday: (count: number) => {
-    set({today: count})
   },
   countdown: () => {
     set((state) => {
