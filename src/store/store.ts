@@ -15,8 +15,6 @@ type State = {
 
 type Actions = {
   initData: (today: number, total: number, count: number) => void
-  updateDaykey: (key: string) => void
-  updateToday: (count: number) => void
   countdown: () => void // 倒计时
   tick: () => void
   reset: () => void
