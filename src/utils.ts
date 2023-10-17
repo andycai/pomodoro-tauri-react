@@ -49,7 +49,7 @@ export const changeAudio = () => {
   if (_isMute) { // 当前已静音
       _isMute = false 
   } else {
-    if (currentAudioIndex > 0 && (currentAudioIndex % diAudioPaths.length) == 0) {
+    if (currentAudioIndex + 1 == diAudioPaths.length) {
       _isMute = true
       return;
     }
@@ -67,7 +67,7 @@ export const playEndAudio = (isPlay: boolean): void => {
     audio.currentTime = 0 
     audio.pause()
   }
-  if (isPlay) {
+  if (isPlay && !_isMute) {
     const index = currentEndAudioIndex > endAudioPaths.length - 1 ? 0 : currentEndAudioIndex
     endAudioObjs.get(endAudioPaths[index])?.play() 
   }
