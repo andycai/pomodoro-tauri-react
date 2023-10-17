@@ -3,7 +3,7 @@ import { Status } from '../config'
 import { Close } from '../icons/close'
 import { Volume } from '../icons/volume'
 import { VolumeMute } from '../icons/volume-mute'
-import { changeAudio, playAudio } from '../utils'
+import { changeAudio, isMute, playAudio } from '../utils'
 import { memo, useCallback, useState } from 'react'
 import { useStore } from '../store/store'
 
@@ -13,7 +13,8 @@ function AppBar() {
 
   const onClick = useCallback(() => {
     if (status === Status.Tick) {
-      setMusicOff(!changeAudio())
+      changeAudio()
+      setMusicOff(isMute())
       playAudio(!musicOff)
     }
   }, [status])

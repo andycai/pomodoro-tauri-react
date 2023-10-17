@@ -24,7 +24,7 @@ const endAudioObjs = new Map();
 
 let currentAudioIndex = 0
 let currentEndAudioIndex = 0
-let needMute = true
+let _isMute = false 
 
 export const addAudio = (path: string, audio: HTMLAudioElement) => {
   audioObjs.set(path, audio)
@@ -35,25 +35,27 @@ export const playAudio = (isPlay: boolean): void => {
     audio.currentTime = 0 
     audio.pause()
   }
-  if (isPlay) {
+  if (isPlay && !_isMute) {
     const index = currentAudioIndex > diAudioPaths.length - 1 ? 0 : currentAudioIndex
     audioObjs.get(diAudioPaths[index])?.play() 
   }
 }
 
+export const isMute = () => {
+  return _isMute;
+}
+
 export const changeAudio = () => {
-  currentAudioIndex++
-  if (needMute == true && (currentAudioIndex % diAudioPaths.length) == 0) {
-    needMute = false
-    currentAudioIndex--
-    // console.log("index1:", currentAudioIndex)
-    return false
+  if (_isMute) { // 当前已静音
+      _isMute = false 
+  } else {
+    if (currentAudioIndex > 0 && (currentAudioIndex % diAudioPaths.length) == 0) {
+      _isMute = true
+      return;
+    }
   }
-  needMute = true
-  // console.log("", currentAudioIndex, diAudioPaths.length, currentAudioIndex % (diAudioPaths.length))
+  currentAudioIndex++
   currentAudioIndex = currentAudioIndex % (diAudioPaths.length)
-  // console.log("index2:", currentAudioIndex)
-  return true
 }
 
 export const addEndAudio = (path: string, audio: HTMLAudioElement) => {
