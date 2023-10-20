@@ -3,6 +3,12 @@ use tauri::{
     SystemTrayMenuItem, SystemTraySubmenu, api::dialog::message,
 };
 
+#[derive(Clone, serde::Serialize)]
+struct DurationPayload {
+  duration: i16,
+  r#break: i16,
+}
+
 // 托盘菜单
 pub fn menu() -> SystemTray {
     let tray_menu = SystemTrayMenu::new()
@@ -36,8 +42,8 @@ pub fn menu() -> SystemTray {
 // 菜单事件
 pub fn handler(app: &AppHandle, event: SystemTrayEvent) {
     // 获取应用窗口
-    let window = app.get_window("main").unwrap();
-    let parent_window = Some(&window);
+    // let window = app.get_window("main").unwrap();
+    // let parent_window = Some(&window);
     // 匹配点击事件
     match event {
         // 左键点击
@@ -77,10 +83,38 @@ pub fn handler(app: &AppHandle, event: SystemTrayEvent) {
         // 根据菜单 id 进行事件匹配
         SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
             "wd15" => {
-                message(parent_window, "wd15", "TODO");
+                app.emit_all("event-change-duration", DurationPayload { duration: 15, r#break: -1 }).unwrap();
+                // message(parent_window, "wd15", "TODO");
             }
             "wd20" => {
-                message(parent_window, "wd20", "TODO");
+                app.emit_all("event-change-duration", DurationPayload { duration: 20, r#break: -1 }).unwrap();
+            }
+            "wd25" => {
+                app.emit_all("event-change-duration", DurationPayload { duration: 25, r#break: -1 }).unwrap();
+            }
+            "wd30" => {
+                app.emit_all("event-change-duration", DurationPayload { duration: 30, r#break: -1 }).unwrap();
+            }
+            "wd45" => {
+                app.emit_all("event-change-duration", DurationPayload { duration: 45, r#break: -1 }).unwrap();
+            }
+            "wd60" => {
+                app.emit_all("event-change-duration", DurationPayload { duration: 60, r#break: -1 }).unwrap();
+            }
+            "bd5" => {
+                app.emit_all("event-change-break", DurationPayload { duration: -1, r#break: 5 }).unwrap();
+            }
+            "bd10" => {
+                app.emit_all("event-change-break", DurationPayload { duration: -1, r#break: 10 }).unwrap();
+            }
+            "bd15" => {
+                app.emit_all("event-change-break", DurationPayload { duration: -1, r#break: 15 }).unwrap();
+            }
+            "bd20" => {
+                app.emit_all("event-change-break", DurationPayload { duration: -1, r#break: 20 }).unwrap();
+            }
+            "bd30" => {
+                app.emit_all("event-change-break", DurationPayload { duration: -1, r#break: 30 }).unwrap();
             }
             "quit" => {
                 std::process::exit(0);

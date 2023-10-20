@@ -19,6 +19,7 @@ type Actions = {
   tick: () => void
   reset: () => void
   changeTheme: () => void
+  updateDuration: () => void
 }
 
 export const useStore = create<State & Actions>()((set) => ({
@@ -93,6 +94,17 @@ export const useStore = create<State & Actions>()((set) => ({
   changeTheme: () => {
     set((state) => {
       return { theme: (state.theme + 1) % themeNum }
+    })
+  },
+  updateDuration: () => {
+    set((state) => {
+      if (state.status == Status.Idle) {
+        if (state.workType == WorkType.Break) {
+          return {count: getIntDefault(Keys.defaultBreakDuration, DefaultBreakDuration)}
+        }
+        return {count: getIntDefault(Keys.defaultWorkDuration, DefaultWorkDuration)}
+      }
+      return {}
     })
   },
 }))

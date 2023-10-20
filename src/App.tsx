@@ -2,13 +2,19 @@ import { useEffect, useMemo, useRef } from "react"
 import TimeCounter from "./components/TimeCounter"
 import { resolveResource } from "@tauri-apps/api/path"
 import { readTextFile } from "@tauri-apps/api/fs"
+import { listen } from '@tauri-apps/api/event'
 import { useStore } from "./store/store"
 import { DefaultWorkDuration, INTERVAL, Keys, Status, Tasks, dataJsonURL, diAudioPaths, endAudioPaths } from "./config"
-import { getIntDefault, initItem } from "./store/local"
+import { getIntDefault, initItem, saveItem } from "./store/local"
 import { convertFileSrc } from "@tauri-apps/api/tauri"
 import { addAudio, addEndAudio, convertThemeStyle } from "./utils"
 import Appbar from "./components/AppBar"
 import Footbar from "./components/FootBar"
+
+interface DurationPayload {
+  duration: number,
+  break: number,
+}
 
 function useInterval(callback: any, delay: number, status: Status) {
   const savedCallback = useRef(callback)
@@ -45,6 +51,7 @@ function App() {
   const [status, workType, theme] = useStore((state) => [state.status, state.workType, state.theme])
   const initData = useStore((state) => state.initData)
   const countdown = useStore((state) => state.countdown)
+  const updateDuration = useStore((state) => state.updateDuration)
 
   useEffect(() => {
       initData(
@@ -61,6 +68,18 @@ function App() {
       const data = JSON.parse(await readTextFile(resourcePath))
       initItem(Keys.defaultWorkDuration, data.defaultWorkDuration.toString())
       initItem(Keys.defaultBreakDuration, data.defaultBreakDuration.toString())
+
+      await listen<DurationPayload>('event-change-duration', (event) => {
+        saveItem(Keys.defaultWorkDuration, (event.payload.duration*60).toString())
+        updateDuration()
+        // console.log("event:%s, payload:%s", event.event, event.payload.duration)
+      })
+
+      await listen<DurationPayload>('event-change-break', (event) => {
+        saveItem(Keys.defaultBreakDuration, (event.payload.break*60).toString())
+        updateDuration()
+        // console.log("event:%s, payload:%s", event.event, event.payload.break)
+      })
 
       for (const v of diAudioPaths) {
         // console.log("path: ", v)
