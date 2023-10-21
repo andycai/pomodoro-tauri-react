@@ -1,6 +1,7 @@
 use tauri::{
     AppHandle, CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, SystemTraySubmenu, api::dialog::message,
+    SystemTrayMenuItem, SystemTraySubmenu, 
+    // api::dialog::message,
 };
 
 #[derive(Clone, serde::Serialize)]
