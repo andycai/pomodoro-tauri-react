@@ -1,11 +1,11 @@
 # Pomodoro
 A simple pomodoro timer write in Tauri and React.
 
-[Click to Download](https://github.com/andycai/pomodoro/releases)
+[Click to Download](https://github.com/andycai/pomodoro-tauri-react/releases/latest)
 
-- [macOs](https://github.com/andycai/pomodoro-tauri-react/releases/download/v0.7.1/pomodoro_0.7.1_x64.dmg)
-- [Windows](https://github.com/andycai/pomodoro-tauri-react/releases/download/v0.7.1/pomodoro_0.7.1_x64-setup.exe)
-- [Linux](https://github.com/andycai/pomodoro-tauri-react/releases/download/v0.7.1/pomodoro_0.7.1_amd64.deb)
+- macOs
+- Windows
+- Linux
 
 ## Screenshots
 
